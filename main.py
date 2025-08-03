@@ -15,13 +15,53 @@ ROUNDED_LABEL_POS_Y = 45
 CLOUD_IMAGE_WIDTH = 1350
 CLOUD_IMAGE_HEIGHT = 1350
 
+class BallWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Ball")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Ball", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Placeholder content label
+        content_label = QLabel("Ball Window Content", self)
+        content_label.setFont(QFont("Corbel", 15))
+        content_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        content_label.setWordWrap(True)
+        content_label.setFixedWidth(500)
+        content_label.move(332, 200)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
 class MaterialWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Materi")
         self.resize(1665, 780)
         image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
-        self.pixmap = QPixmap(image_path).scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         # Main title label with global properties and centered text
         title_label = QLabel("Materi", self)
@@ -48,12 +88,16 @@ class MaterialWindow(QWidget):
         labelYOffset = buttonYOffset + buttonSize + 10  # Place labels 10px below buttons
 
         # Ball Button
-        self.button1 = QPushButton("", self)
-        pixmap1 = QPixmap(button_paths[0]).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.button1.setIcon(QIcon(pixmap1))
-        self.button1.setIconSize(QSize(buttonSize, buttonSize))
-        self.button1.setFixedSize(buttonSize, buttonSize)
-        self.button1.setStyleSheet("""
+        self.ballButton = QPushButton("", self)
+        pixmap1 = QPixmap(button_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {button_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.ballButton.setIcon(QIcon(pixmap1))
+            self.ballButton.setIconSize(QSize(buttonSize, buttonSize))
+        self.ballButton.setFixedSize(buttonSize, buttonSize)
+        self.ballButton.setStyleSheet("""
             QPushButton {
                 background: transparent;
                 border: none;
@@ -61,20 +105,24 @@ class MaterialWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.button1.move(buttonXOffset, buttonYOffset)
-        self.button1.clicked.connect(self.on_button1_clicked)
+        self.ballButton.move(buttonXOffset, buttonYOffset)
+        self.ballButton.clicked.connect(self.on_ball_clicked)
 
-        # Label for Button 1
-        button1_label = QLabel("Button 1", self)
-        button1_label.setFont(QFont("Cooper Black", 20))
-        button1_label.setStyleSheet("color: #333F50; background: transparent;")
-        button1_label.move(buttonXOffset + 20, labelYOffset)
+        # Label for Ball Button
+        ball_label = QLabel("Ball", self)
+        ball_label.setFont(QFont("Cooper Black", 20))
+        ball_label.setStyleSheet("color: #333F50; background: transparent;")
+        ball_label.move(buttonXOffset + 20, labelYOffset)
 
-        # Button 2
+        # Block Button
         self.button2 = QPushButton("", self)
-        pixmap2 = QPixmap(button_paths[1]).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.button2.setIcon(QIcon(pixmap2))
-        self.button2.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap2 = QPixmap(button_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {button_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.button2.setIcon(QIcon(pixmap2))
+            self.button2.setIconSize(QSize(buttonSize, buttonSize))
         self.button2.setFixedSize(buttonSize, buttonSize)
         self.button2.setStyleSheet("""
             QPushButton {
@@ -87,17 +135,21 @@ class MaterialWindow(QWidget):
         self.button2.move(buttonXOffset + buttonSpacing, buttonYOffset)
         self.button2.clicked.connect(self.on_button2_clicked)
 
-        # Label for Button 2
-        button2_label = QLabel("Button 2", self)
-        button2_label.setFont(QFont("Cooper Black", 20))
-        button2_label.setStyleSheet("color: #333F50; background: transparent;")
-        button2_label.move(buttonXOffset + buttonSpacing + 20, labelYOffset)
+        # Label for Block Button
+        block_label = QLabel("Block", self)
+        block_label.setFont(QFont("Cooper Black", 20))
+        block_label.setStyleSheet("color: #333F50; background: transparent;")
+        block_label.move(buttonXOffset + buttonSpacing + 20, labelYOffset)
 
-        # Button 3
+        # Cone Button
         self.button3 = QPushButton("", self)
-        pixmap3 = QPixmap(button_paths[2]).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.button3.setIcon(QIcon(pixmap3))
-        self.button3.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap3 = QPixmap(button_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {button_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.button3.setIcon(QIcon(pixmap3))
+            self.button3.setIconSize(QSize(buttonSize, buttonSize))
         self.button3.setFixedSize(buttonSize, buttonSize)
         self.button3.setStyleSheet("""
             QPushButton {
@@ -110,17 +162,21 @@ class MaterialWindow(QWidget):
         self.button3.move(buttonXOffset + 2 * buttonSpacing, buttonYOffset)
         self.button3.clicked.connect(self.on_button3_clicked)
 
-        # Label for Button 3
-        button3_label = QLabel("Button 3", self)
-        button3_label.setFont(QFont("Cooper Black", 20))
-        button3_label.setStyleSheet("color: #333F50; background: transparent;")
-        button3_label.move(buttonXOffset + 2 * buttonSpacing + 20, labelYOffset)
+        # Label for Cone Button
+        cone_label = QLabel("Cone", self)
+        cone_label.setFont(QFont("Cooper Black", 20))
+        cone_label.setStyleSheet("color: #333F50; background: transparent;")
+        cone_label.move(buttonXOffset + 2 * buttonSpacing + 20, labelYOffset)
 
-        # Button 4
+        # Cube Button
         self.button4 = QPushButton("", self)
-        pixmap4 = QPixmap(button_paths[3]).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.button4.setIcon(QIcon(pixmap4))
-        self.button4.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap4 = QPixmap(button_paths[3])
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {button_paths[3]}")
+        else:
+            pixmap4 = pixmap4.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.button4.setIcon(QIcon(pixmap4))
+            self.button4.setIconSize(QSize(buttonSize, buttonSize))
         self.button4.setFixedSize(buttonSize, buttonSize)
         self.button4.setStyleSheet("""
             QPushButton {
@@ -133,17 +189,21 @@ class MaterialWindow(QWidget):
         self.button4.move(buttonXOffset + 3 * buttonSpacing, buttonYOffset)
         self.button4.clicked.connect(self.on_button4_clicked)
 
-        # Label for Button 4
-        button4_label = QLabel("Button 4", self)
-        button4_label.setFont(QFont("Cooper Black", 20))
-        button4_label.setStyleSheet("color: #333F50; background: transparent;")
-        button4_label.move(buttonXOffset + 3 * buttonSpacing + 20, labelYOffset)
+        # Label for Cube Button
+        cube_label = QLabel("Cube", self)
+        cube_label.setFont(QFont("Cooper Black", 20))
+        cube_label.setStyleSheet("color: #333F50; background: transparent;")
+        cube_label.move(buttonXOffset + 3 * buttonSpacing + 20, labelYOffset)
 
-        # Button 5
+        # Cylinder Button
         self.button5 = QPushButton("", self)
-        pixmap5 = QPixmap(button_paths[4]).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.button5.setIcon(QIcon(pixmap5))
-        self.button5.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap5 = QPixmap(button_paths[4])
+        if pixmap5.isNull():
+            print(f"Error: Failed to load image at {button_paths[4]}")
+        else:
+            pixmap5 = pixmap5.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.button5.setIcon(QIcon(pixmap5))
+            self.button5.setIconSize(QSize(buttonSize, buttonSize))
         self.button5.setFixedSize(buttonSize, buttonSize)
         self.button5.setStyleSheet("""
             QPushButton {
@@ -156,26 +216,29 @@ class MaterialWindow(QWidget):
         self.button5.move(buttonXOffset + 4 * buttonSpacing, buttonYOffset)
         self.button5.clicked.connect(self.on_button5_clicked)
 
-        # Label for Button 5
-        button5_label = QLabel("Button 5", self)
-        button5_label.setFont(QFont("Cooper Black", 20))
-        button5_label.setStyleSheet("color: #333F50; background: transparent;")
-        button5_label.move(buttonXOffset + 4 * buttonSpacing + 20, labelYOffset)
+        # Label for Cylinder Button
+        cylinder_label = QLabel("Cylinder", self)
+        cylinder_label.setFont(QFont("Cooper Black", 20))
+        cylinder_label.setStyleSheet("color: #333F50; background: transparent;")
+        cylinder_label.move(buttonXOffset + 4 * buttonSpacing + 20, labelYOffset)
 
-    def on_button1_clicked(self):
-        print("Button 1 clicked!")
+    def on_ball_clicked(self):
+        print("Ball button clicked!")
+        self.ball_window = BallWindow()
+        self.ball_window.show()
+        self.close()
 
     def on_button2_clicked(self):
-        print("Button 2 clicked!")
+        print("Block button clicked!")
 
     def on_button3_clicked(self):
-        print("Button 3 clicked!")
+        print("Cone button clicked!")
 
     def on_button4_clicked(self):
-        print("Button 4 clicked!")
+        print("Cube button clicked!")
 
     def on_button5_clicked(self):
-        print("Button 5 clicked!")
+        print("Cylinder button clicked!")
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -190,7 +253,11 @@ class KIKDWindow(QWidget):
         self.setWindowTitle("KI/KD")
         self.resize(1665, 780)
         image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
-        self.pixmap = QPixmap(image_path).scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         # Main title label with global properties and centered text
         title_label = QLabel("KI/KD", self)
@@ -232,7 +299,11 @@ class KIKDWindow(QWidget):
 
         # Cloud image with global size, centered and at bottommost layer
         cloud_path = os.path.join(os.path.dirname(__file__), "assets", "kikdresource", "cloud.png")
-        cloud_pixmap = QPixmap(cloud_path).scaled(CLOUD_IMAGE_WIDTH, CLOUD_IMAGE_HEIGHT, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        cloud_pixmap = QPixmap(cloud_path)
+        if cloud_pixmap.isNull():
+            print(f"Error: Failed to load cloud image at {cloud_path}")
+        else:
+            cloud_pixmap = cloud_pixmap.scaled(CLOUD_IMAGE_WIDTH, CLOUD_IMAGE_HEIGHT, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         cloudImage = QLabel(self)
         cloudImage.setPixmap(cloud_pixmap)
         cloudImage.setFixedSize(CLOUD_IMAGE_WIDTH, CLOUD_IMAGE_HEIGHT)
@@ -252,7 +323,11 @@ class Slide2Window(QWidget):
         self.setWindowTitle("Slide 2")
         self.resize(1665, 780)
         image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
-        self.pixmap = QPixmap(image_path).scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         # Main title label with global properties and centered text
         label = QLabel("Menu Utama", self)
@@ -276,9 +351,13 @@ class Slide2Window(QWidget):
 
         # Button for Book Slide (navigates to MaterialWindow)
         self.bookButton = QPushButton("", self)
-        pixmap1 = QPixmap(books_path).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.bookButton.setIcon(QIcon(pixmap1))
-        self.bookButton.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap1 = QPixmap(books_path)
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {books_path}")
+        else:
+            pixmap1 = pixmap1.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.bookButton.setIcon(QIcon(pixmap1))
+            self.bookButton.setIconSize(QSize(buttonSize, buttonSize))
         self.bookButton.setFixedSize(buttonSize, buttonSize)
         self.bookButton.setStyleSheet("""
             QPushButton {
@@ -299,9 +378,13 @@ class Slide2Window(QWidget):
 
         # Button for KIKD Slide
         self.KIKDbutton = QPushButton("", self)
-        pixmap2 = QPixmap(kikd_path).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.KIKDbutton.setIcon(QIcon(pixmap2))
-        self.KIKDbutton.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap2 = QPixmap(kikd_path)
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {kikd_path}")
+        else:
+            pixmap2 = pixmap2.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.KIKDbutton.setIcon(QIcon(pixmap2))
+            self.KIKDbutton.setIconSize(QSize(buttonSize, buttonSize))
         self.KIKDbutton.setFixedSize(buttonSize, buttonSize)
         self.KIKDbutton.setStyleSheet("""
             QPushButton {
@@ -322,9 +405,13 @@ class Slide2Window(QWidget):
 
         # Button for Evaluation Slide
         self.checklistButton = QPushButton("", self)
-        pixmap3 = QPixmap(checklist_path).scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.checklistButton.setIcon(QIcon(pixmap3))
-        self.checklistButton.setIconSize(QSize(buttonSize, buttonSize))
+        pixmap3 = QPixmap(checklist_path)
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {checklist_path}")
+        else:
+            pixmap3 = pixmap3.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.checklistButton.setIcon(QIcon(pixmap3))
+            self.checklistButton.setIconSize(QSize(buttonSize, buttonSize))
         self.checklistButton.setFixedSize(buttonSize, buttonSize)
         self.checklistButton.setStyleSheet("""
             QPushButton {
@@ -372,7 +459,11 @@ class MainMenuWindow(QWidget):
         self.resize(1665, 780)
         image_path = os.path.join(os.path.dirname(__file__), "assets", "slide1resource", "slide1.png")
         playbutton_path = os.path.join(os.path.dirname(__file__), "assets", "slide1resource", "playbutton.png")
-        self.pixmap = QPixmap(image_path).scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         xOffset = 20
         yOffset = 50
@@ -388,7 +479,11 @@ class MainMenuWindow(QWidget):
 
         # Play Button (no animation)
         self.playbutton_path = playbutton_path
-        self.playbutton_pixmap = QPixmap(self.playbutton_path).scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.playbutton_pixmap = QPixmap(self.playbutton_path)
+        if self.playbutton_pixmap.isNull():
+            print(f"Error: Failed to load play button image at {playbutton_path}")
+        else:
+            self.playbutton_pixmap = self.playbutton_pixmap.scaled(120, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.play_button = QPushButton("", self)
         self.play_button.setIcon(QIcon(self.playbutton_pixmap))
         self.play_button.setIconSize(QSize(120, 120))
