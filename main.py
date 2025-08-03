@@ -36,13 +36,67 @@ class BallWindow(QWidget):
         title_label.setAlignment(Qt.AlignCenter)  # Center text
         title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
 
-        # Placeholder content label
-        content_label = QLabel("Ball Window Content", self)
-        content_label.setFont(QFont("Corbel", 15))
-        content_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
-        content_label.setWordWrap(True)
-        content_label.setFixedWidth(500)
-        content_label.move(332, 200)
+        # Three images from materiresource/ballslide
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "ballslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "appleBall.png"),
+            os.path.join(ballslide_dir, "soccerBall.png"),
+            os.path.join(ballslide_dir, "watermelonBall.png")
+        ]
+        image_size = 180
+        image_y = ROUNDED_LABEL_POS_Y + ROUNDED_LABEL_HEIGHT + 50  # Below title
+        total_width = 3 * image_size + 2 * 50  # 3 images + 2 gaps of 50px
+        start_x = (1665 - total_width) // 2  # Center images horizontally
+
+        # Image 1
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(start_x, image_y)
+
+        # Image 2
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(start_x + image_size + 50, image_y)
+
+        # Image 3
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(start_x + 2 * (image_size + 50), image_y)
+
+        # Cooper Black label (contohText)
+        contohText = QLabel("Contoh Text", self)
+        contohText.setFont(QFont("Cooper Black", 20))
+        contohText.setStyleSheet("color: #333F50; background: transparent;")
+        contohText.setFixedWidth(500)
+        contohText.setAlignment(Qt.AlignCenter)
+        contohText.move((1665 - 500) // 2, image_y + image_size + 50)  # Below images
+
+        # Corbel label
+        corbel_label = QLabel("Corbel Label Content", self)
+        corbel_label.setFont(QFont("Corbel", 15))
+        corbel_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        corbel_label.setWordWrap(True)
+        corbel_label.setFixedWidth(500)
+        corbel_label.setAlignment(Qt.AlignCenter)
+        corbel_label.move((1665 - 500) // 2, image_y + image_size + 100)  # Below contohText
 
     def paintEvent(self, event):
         painter = QPainter(self)
