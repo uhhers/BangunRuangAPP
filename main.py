@@ -571,4 +571,4 @@ class MainMenuWindow(QWidget):
 app = QApplication(sys.argv)
 window = MainMenuWindow()
 window.show()
-sys.exit(app.exec_())
+sys.exit(app.exec_()) 
