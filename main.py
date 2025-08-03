@@ -47,6 +47,7 @@ class BallWindow(QWidget):
         image_y = ROUNDED_LABEL_POS_Y + ROUNDED_LABEL_HEIGHT + 50  # Below title
         total_width = 3 * image_size + 2 * 50  # 3 images + 2 gaps of 50px
         start_x = (1665 - total_width) // 2  # Center images horizontally
+        xOffset = 500
 
         # Image 1
         image1_label = QLabel(self)
@@ -57,7 +58,7 @@ class BallWindow(QWidget):
             pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image1_label.setPixmap(pixmap1)
         image1_label.setFixedSize(image_size, image_size)
-        image1_label.move(start_x, image_y)
+        image1_label.move(start_x + xOffset, image_y)
 
         # Image 2
         image2_label = QLabel(self)
@@ -68,7 +69,7 @@ class BallWindow(QWidget):
             pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image2_label.setPixmap(pixmap2)
         image2_label.setFixedSize(image_size, image_size)
-        image2_label.move(start_x + image_size + 50, image_y)
+        image2_label.move((start_x + image_size + 50) + xOffset, image_y)
 
         # Image 3
         image3_label = QLabel(self)
@@ -79,7 +80,7 @@ class BallWindow(QWidget):
             pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image3_label.setPixmap(pixmap3)
         image3_label.setFixedSize(image_size, image_size)
-        image3_label.move(start_x + 2 * (image_size + 50), image_y)
+        image3_label.move((start_x + 2 * (image_size + 50)) + xOffset, image_y)
 
         # Cooper Black label (contohText)
         contohText = QLabel("Contoh Text", self)
