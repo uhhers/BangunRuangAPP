@@ -36,7 +36,7 @@ class BallWindow(QWidget):
         title_label.setAlignment(Qt.AlignCenter)  # Center text
         title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
 
-        # Three images from materiresource/ballslide
+        # Three images from materiresource/ballslide with pure coordinates
         ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "ballslide")
         image_paths = [
             os.path.join(ballslide_dir, "appleBall.png"),
@@ -44,10 +44,6 @@ class BallWindow(QWidget):
             os.path.join(ballslide_dir, "watermelonBall.png")
         ]
         image_size = 180
-        image_y = ROUNDED_LABEL_POS_Y + ROUNDED_LABEL_HEIGHT + 50  # Below title
-        total_width = 3 * image_size + 2 * 50  # 3 images + 2 gaps of 50px
-        start_x = (1665 - total_width) // 2  # Center images horizontally
-        xOffset = 500
 
         # Image 1
         image1_label = QLabel(self)
@@ -58,7 +54,7 @@ class BallWindow(QWidget):
             pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image1_label.setPixmap(pixmap1)
         image1_label.setFixedSize(image_size, image_size)
-        image1_label.move(start_x + xOffset, image_y)
+        image1_label.move(400, 245)
 
         # Image 2
         image2_label = QLabel(self)
@@ -69,7 +65,7 @@ class BallWindow(QWidget):
             pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image2_label.setPixmap(pixmap2)
         image2_label.setFixedSize(image_size, image_size)
-        image2_label.move((start_x + image_size + 50) + xOffset, image_y)
+        image2_label.move(740, 245)
 
         # Image 3
         image3_label = QLabel(self)
@@ -80,7 +76,7 @@ class BallWindow(QWidget):
             pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image3_label.setPixmap(pixmap3)
         image3_label.setFixedSize(image_size, image_size)
-        image3_label.move((start_x + 2 * (image_size + 50)) + xOffset, image_y)
+        image3_label.move(1080, 245)
 
         # Cooper Black label (contohText)
         contohText = QLabel("Contoh Text", self)
@@ -88,7 +84,7 @@ class BallWindow(QWidget):
         contohText.setStyleSheet("color: #333F50; background: transparent;")
         contohText.setFixedWidth(500)
         contohText.setAlignment(Qt.AlignCenter)
-        contohText.move((1665 - 500) // 2, image_y + image_size + 50)  # Below images
+        contohText.move((1665 - 500) // 2, 245 + image_size + 50)  # Below images
 
         # Corbel label
         corbel_label = QLabel("Corbel Label Content", self)
@@ -97,7 +93,7 @@ class BallWindow(QWidget):
         corbel_label.setWordWrap(True)
         corbel_label.setFixedWidth(500)
         corbel_label.setAlignment(Qt.AlignCenter)
-        corbel_label.move((1665 - 500) // 2, image_y + image_size + 100)  # Below contohText
+        corbel_label.move((1665 - 500) // 2, 245 + image_size + 100)  # Below contohText
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -572,4 +568,4 @@ class MainMenuWindow(QWidget):
 app = QApplication(sys.argv)
 window = MainMenuWindow()
 window.show()
-sys.exit(app.exec_()) 
+sys.exit(app.exec_())
