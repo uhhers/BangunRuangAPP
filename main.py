@@ -15,6 +15,23 @@ ROUNDED_LABEL_POS_Y = 45
 CLOUD_IMAGE_WIDTH = 1350
 CLOUD_IMAGE_HEIGHT = 1350
 
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton
+from PyQt5.QtGui import QPixmap, QPainter, QFont, QIcon
+from PyQt5.QtCore import Qt, QSize
+import sys
+import os
+
+# Global variables for rounded square label properties
+ROUNDED_LABEL_WIDTH = 850
+ROUNDED_LABEL_HEIGHT = 150
+ROUNDED_LABEL_COLOR = "rgba(174, 208, 194, 0.24)"
+ROUNDED_LABEL_POS_X = ((1665 - 850) // 2) + 10  # Center horizontally with offset
+ROUNDED_LABEL_POS_Y = 45
+
+# Global variables for cloud image size in KIKD window
+CLOUD_IMAGE_WIDTH = 1350
+CLOUD_IMAGE_HEIGHT = 1350
+
 class BallWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -36,7 +53,21 @@ class BallWindow(QWidget):
         title_label.setAlignment(Qt.AlignCenter)  # Center text
         title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
 
-        # Three images from materiresource/ballslide with pure coordinates
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Bola adalah bangun ruang tiga dimensi yang dibentuk oleh tak hingga lingkaran berjari-jari sama panjang dan berpusat pada titik yang sama. Bola hanya memiliki 1 sisi.", self)
+        text_label.setFont(QFont("Corbel", 15))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(100, 245)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
         ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "ballslide")
         image_paths = [
             os.path.join(ballslide_dir, "appleBall.png"),
@@ -45,7 +76,7 @@ class BallWindow(QWidget):
         ]
         image_size = 180
 
-        # Image 1
+        # Image 1 (appleBall.png)
         image1_label = QLabel(self)
         pixmap1 = QPixmap(image_paths[0])
         if pixmap1.isNull():
@@ -54,9 +85,9 @@ class BallWindow(QWidget):
             pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image1_label.setPixmap(pixmap1)
         image1_label.setFixedSize(image_size, image_size)
-        image1_label.move(400, 245)
+        image1_label.move(750, 305)
 
-        # Image 2
+        # Image 2 (soccerBall.png)
         image2_label = QLabel(self)
         pixmap2 = QPixmap(image_paths[1])
         if pixmap2.isNull():
@@ -65,9 +96,9 @@ class BallWindow(QWidget):
             pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image2_label.setPixmap(pixmap2)
         image2_label.setFixedSize(image_size, image_size)
-        image2_label.move(740, 245)
+        image2_label.move(910, 321)
 
-        # Image 3
+        # Image 3 (watermelonBall.png)
         image3_label = QLabel(self)
         pixmap3 = QPixmap(image_paths[2])
         if pixmap3.isNull():
@@ -76,24 +107,19 @@ class BallWindow(QWidget):
             pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image3_label.setPixmap(pixmap3)
         image3_label.setFixedSize(image_size, image_size)
-        image3_label.move(1080, 245)
-
-        # Cooper Black label (contohText)
-        contohText = QLabel("Contoh Text", self)
-        contohText.setFont(QFont("Cooper Black", 20))
-        contohText.setStyleSheet("color: #333F50; background: transparent;")
-        contohText.setFixedWidth(500)
-        contohText.setAlignment(Qt.AlignCenter)
-        contohText.move((1665 - 500) // 2, 245 + image_size + 50)  # Below images
-
-        # Corbel label
-        corbel_label = QLabel("Corbel Label Content", self)
-        corbel_label.setFont(QFont("Corbel", 15))
-        corbel_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
-        corbel_label.setWordWrap(True)
-        corbel_label.setFixedWidth(500)
-        corbel_label.setAlignment(Qt.AlignCenter)
-        corbel_label.move((1665 - 500) // 2, 245 + image_size + 100)  # Below contohText
+        image3_label.move(1110, 321)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(40, 50)
+        image4_label.lower()
 
     def paintEvent(self, event):
         painter = QPainter(self)
