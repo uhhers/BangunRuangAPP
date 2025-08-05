@@ -32,101 +32,6 @@ ROUNDED_LABEL_POS_Y = 45
 CLOUD_IMAGE_WIDTH = 1350
 CLOUD_IMAGE_HEIGHT = 1350
 
-class BallWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Ball")
-        self.resize(1665, 780)
-        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
-        self.pixmap = QPixmap(image_path)
-        if self.pixmap.isNull():
-            print(f"Error: Failed to load image at {image_path}")
-        else:
-            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-
-        # Main title label with global properties and centered text
-        title_label = QLabel("Ball", self)
-        title_label.setFont(QFont("Cooper Black", 60))
-        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
-        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
-        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
-        title_label.setAlignment(Qt.AlignCenter)  # Center text
-        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
-
-        # Text label explaining the sphere (like the speech bubble)
-        text_label = QLabel("Bola adalah bangun ruang tiga dimensi yang dibentuk oleh tak hingga lingkaran berjari-jari sama panjang dan berpusat pada titik yang sama. Bola hanya memiliki 1 sisi.", self)
-        text_label.setFont(QFont("Corbel", 15))
-        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
-        text_label.setWordWrap(True)
-        text_label.setFixedWidth(500)
-        text_label.move(150, 345)
-
-        # "CONTOH" label above the images
-        contoh_label = QLabel("CONTOH", self)
-        contoh_label.setFont(QFont("Cooper Black", 20))
-        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
-        contoh_label.move(750, 230)
-
-        # Three images from materiresource/ballslide with adjusted coordinates
-        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "ballslide")
-        image_paths = [
-            os.path.join(ballslide_dir, "appleBall.png"),
-            os.path.join(ballslide_dir, "soccerBall.png"),
-            os.path.join(ballslide_dir, "watermelonBall.png")
-        ]
-        image_size = 180
-
-        # Image 1 (appleBall.png)
-        image1_label = QLabel(self)
-        pixmap1 = QPixmap(image_paths[0])
-        if pixmap1.isNull():
-            print(f"Error: Failed to load image at {image_paths[0]}")
-        else:
-            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            image1_label.setPixmap(pixmap1)
-        image1_label.setFixedSize(image_size, image_size)
-        image1_label.move(750, 305)
-
-        # Image 2 (soccerBall.png)
-        image2_label = QLabel(self)
-        pixmap2 = QPixmap(image_paths[1])
-        if pixmap2.isNull():
-            print(f"Error: Failed to load image at {image_paths[1]}")
-        else:
-            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            image2_label.setPixmap(pixmap2)
-        image2_label.setFixedSize(image_size, image_size)
-        image2_label.move(910, 321)
-
-        # Image 3 (watermelonBall.png)
-        image3_label = QLabel(self)
-        pixmap3 = QPixmap(image_paths[2])
-        if pixmap3.isNull():
-            print(f"Error: Failed to load image at {image_paths[2]}")
-        else:
-            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            image3_label.setPixmap(pixmap3)
-        image3_label.setFixedSize(image_size, image_size)
-        image3_label.move(1110, 321)
-        
-        # CloudBackground (nontransparentCloud.png)
-        image4_label = QLabel(self)
-        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
-        if pixmap4.isNull():
-            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
-        else:
-            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            image4_label.setPixmap(pixmap4)
-        image4_label.setFixedSize(600, 600)
-        image4_label.move(90, 150)
-        image4_label.lower()
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.fillRect(self.rect(), Qt.black)
-        x = (self.width() - self.pixmap.width()) // 2
-        y = (self.height() - self.pixmap.height()) // 2
-        painter.drawPixmap(x, y, self.pixmap)
 
 class MaterialWindow(QWidget):
     def __init__(self):
@@ -307,15 +212,408 @@ class MaterialWindow(QWidget):
 
     def on_button2_clicked(self):
         print("Block button clicked!")
+        self.block_window = BlockWindow()
+        self.block_window.show()
+        self.close()
 
     def on_button3_clicked(self):
         print("Cone button clicked!")
 
     def on_button4_clicked(self):
         print("Cube button clicked!")
+        self.cube_window = CubeWindow()
+        self.cube_window.show()
+        self.close()
 
     def on_button5_clicked(self):
         print("Cylinder button clicked!")
+        self.cylinder_window = CylinderWindow()
+        self.cylinder_window.show()
+        self.close()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class CylinderWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Cylinder")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Cylinder", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Tabung adalah bangun ruang tiga dimensi yang dibentuk oleh dua buah lingkaran identik yang sejajar dan sebuah persegi panjang yang mengelilingi kedua lingkaran tersebut. Tabung memiliki 3 sisi dan 2 rusuk. Kedua lingkarandisebut sebagai alas dan tutup tabung serta persegi panjang yang menyelimutinya disebut sebagai selimut tabung.", self)
+        text_label.setFont(QFont("Corbel", 11))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(150, 325)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "cylinderslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "batteryCylinder.png"),
+            os.path.join(ballslide_dir, "biscuitCylinder.png"),
+            os.path.join(ballslide_dir, "sodaCanCylinder.png")
+        ]
+        image_size = 180
+
+        # Image 1 (batteryCylinder.png)
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(750, 305)
+
+        # Image 2 (biscuitCylinder.png)
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(977, 298)
+
+        # Image 3 (sodaCanCylinder.png)
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(1190, 302)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(90, 150)
+        image4_label.lower()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class BallWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Ball")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Ball", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Bola adalah bangun ruang tiga dimensi yang dibentuk oleh tak hingga lingkaran berjari-jari sama panjang dan berpusat pada titik yang sama. Bola hanya memiliki 1 sisi.", self)
+        text_label.setFont(QFont("Corbel", 15))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(150, 345)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "ballslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "appleBall.png"),
+            os.path.join(ballslide_dir, "soccerBall.png"),
+            os.path.join(ballslide_dir, "watermelonBall.png")
+        ]
+        image_size = 180
+
+        # Image 1 (appleBall.png)
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(750, 305)
+
+        # Image 2 (soccerBall.png)
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(910, 321)
+
+        # Image 3 (watermelonBall.png)
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(1110, 321)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(90, 150)
+        image4_label.lower()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class BlockWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Block")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Block", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Balok adalah bangun ruang tiga dimensi yang dibentuk oleh tiga pasang persegi atau persegi panjang, dengan paling tidak satu pasang di antaranya berukuran berbeda. Balok memiliki 6 sisi, 12 rusuk dan 8 titik sudut.", self)
+        text_label.setFont(QFont("Corbel", 15))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(160, 315)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "blockslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "aquariumBlock.png"),
+            os.path.join(ballslide_dir, "closetBlock.png"),
+            os.path.join(ballslide_dir, "outletBlock.png")
+        ]
+        image_size = 180
+
+        # Image 1 (aquariumBlock.png)
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(750, 305)
+
+        # Image 2 (closetBlock.png)
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(910, 321)
+
+        # Image 3 (outletBlock.png)
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(1110, 321)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(90, 150)
+        image4_label.lower()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class CubeWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Cube")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Cube", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Kubus adalah bangun ruang tiga dimensi yang dibatasi oleh enam bidang sisi yang kongruen berbentuk bujur sangkar. Kubus memiliki 6 sisi, 12 rusuk dan 8 titik sudut. Kubus juga disebut bidang enam beraturan, selain itu juga merupakan bentuk khusus dalam prisma segiempat.", self)
+        text_label.setFont(QFont("Corbel", 12))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(150, 325)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "cubeslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "diceCube.png"),
+            os.path.join(ballslide_dir, "giftCube.png"),
+            os.path.join(ballslide_dir, "vaultCube.png")
+        ]
+        image_size = 180
+
+        # Image 1 (diceCube.png)
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(750, 305)
+
+        # Image 2 (giftCube.png)
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(910, 321)
+
+        # Image 3 (vaultCube.png)
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(1110, 321)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(90, 150)
+        image4_label.lower()
 
     def paintEvent(self, event):
         painter = QPainter(self)
