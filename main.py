@@ -59,7 +59,7 @@ class BallWindow(QWidget):
         text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
         text_label.setWordWrap(True)
         text_label.setFixedWidth(500)
-        text_label.move(100, 245)
+        text_label.move(150, 345)
 
         # "CONTOH" label above the images
         contoh_label = QLabel("CONTOH", self)
@@ -118,7 +118,7 @@ class BallWindow(QWidget):
             pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image4_label.setPixmap(pixmap4)
         image4_label.setFixedSize(600, 600)
-        image4_label.move(40, 50)
+        image4_label.move(90, 150)
         image4_label.lower()
 
     def paintEvent(self, event):
