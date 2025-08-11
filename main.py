@@ -218,6 +218,9 @@ class MaterialWindow(QWidget):
 
     def on_button3_clicked(self):
         print("Cone button clicked!")
+        self.cone_window = ConeWindow()
+        self.cone_window.show()
+        self.close()
 
     def on_button4_clicked(self):
         print("Cube button clicked!")
@@ -314,6 +317,102 @@ class CylinderWindow(QWidget):
             image3_label.setPixmap(pixmap3)
         image3_label.setFixedSize(image_size, image_size)
         image3_label.move(1190, 302)
+        
+        # CloudBackground (nontransparentCloud.png)
+        image4_label = QLabel(self)
+        pixmap4 = QPixmap(os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png"))
+        if pixmap4.isNull():
+            print(f"Error: Failed to load image at {os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")}")
+        else:
+            pixmap4 = pixmap4.scaled(600, 600, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image4_label.setPixmap(pixmap4)
+        image4_label.setFixedSize(600, 600)
+        image4_label.move(90, 150)
+        image4_label.lower()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class ConeWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Cone")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Main title label with global properties and centered text
+        title_label = QLabel("Cone", self)
+        title_label.setFont(QFont("Cooper Black", 60))
+        title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
+        title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
+        title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
+        title_label.setAlignment(Qt.AlignCenter)  # Center text
+        title_label.move(ROUNDED_LABEL_POS_X, ROUNDED_LABEL_POS_Y)
+
+        # Text label explaining the sphere (like the speech bubble)
+        text_label = QLabel("Kerucut adalah sebuah limas istimewa yang beralas lingkaran. Kerucut memiliki 2 sisi dan 1 rusuk. Sisi tegak kerucut tidak berupa segitiga tapi berupa bidang miring yang disebut selimut kerucut.", self)
+        text_label.setFont(QFont("Corbel", 15))
+        text_label.setStyleSheet("color: #333F50; background: transparent; padding: 10px;")
+        text_label.setWordWrap(True)
+        text_label.setFixedWidth(500)
+        text_label.move(150, 325)
+
+        # "CONTOH" label above the images
+        contoh_label = QLabel("CONTOH", self)
+        contoh_label.setFont(QFont("Cooper Black", 20))
+        contoh_label.setStyleSheet("color: #333F50; background: transparent;")
+        contoh_label.move(750, 230)
+
+        # Three images from materiresource/ballslide with adjusted coordinates
+        ballslide_dir = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "coneslide")
+        image_paths = [
+            os.path.join(ballslide_dir, "carrotCone.png"),
+            os.path.join(ballslide_dir, "partyHatCone.png"),
+            os.path.join(ballslide_dir, "umbrellaCone.png")
+        ]
+        image_size = 180
+
+        # Image 1 (carrotCone.png)
+        image1_label = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image1_label.setPixmap(pixmap1)
+        image1_label.setFixedSize(image_size, image_size)
+        image1_label.move(750, 305)
+
+        # Image 2 (partyHatCone.png)
+        image2_label = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image2_label.setPixmap(pixmap2)
+        image2_label.setFixedSize(image_size, image_size)
+        image2_label.move(907, 298)
+
+        # Image 3 (umbrellaCone.png)
+        image3_label = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            image3_label.setPixmap(pixmap3)
+        image3_label.setFixedSize(image_size, image_size)
+        image3_label.move(1050, 302)
         
         # CloudBackground (nontransparentCloud.png)
         image4_label = QLabel(self)
@@ -587,10 +686,10 @@ class CubeWindow(QWidget):
         if pixmap2.isNull():
             print(f"Error: Failed to load image at {image_paths[1]}")
         else:
-            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap2 = pixmap2.scaled(image_size * 2, image_size * 2, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image2_label.setPixmap(pixmap2)
-        image2_label.setFixedSize(image_size, image_size)
-        image2_label.move(910, 321)
+        image2_label.setFixedSize(image_size * 2, image_size * 2)
+        image2_label.move(860, 198)
 
         # Image 3 (vaultCube.png)
         image3_label = QLabel(self)
@@ -598,10 +697,10 @@ class CubeWindow(QWidget):
         if pixmap3.isNull():
             print(f"Error: Failed to load image at {image_paths[2]}")
         else:
-            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            pixmap3 = pixmap3.scaled(round(image_size * 1.3), round(image_size * 1.3), Qt.KeepAspectRatio, Qt.SmoothTransformation)
             image3_label.setPixmap(pixmap3)
-        image3_label.setFixedSize(image_size, image_size)
-        image3_label.move(1110, 321)
+        image3_label.setFixedSize(round(image_size * 1.3), round(image_size * 1.3))
+        image3_label.move(1130, 271)
         
         # CloudBackground (nontransparentCloud.png)
         image4_label = QLabel(self)
