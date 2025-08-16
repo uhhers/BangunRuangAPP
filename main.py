@@ -1464,14 +1464,14 @@ class EvaluationWindow(QWidget):
         else:
             self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        # Main title label with global properties and centered text
+        # Main title label
         self.title_label = QLabel("Evaluation", self)
         self.title_label.setFont(QFont("Cooper Black", 60))
         self.title_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
         self.title_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
         self.title_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
         self.title_label.setAlignment(Qt.AlignCenter)
-        self.title_label.move(ROUNDED_LABEL_POS_X, -ROUNDED_LABEL_HEIGHT)  # Start off-screen top
+        self.title_label.move(ROUNDED_LABEL_POS_X, -ROUNDED_LABEL_HEIGHT)
 
         # Four buttons with black_thingy.png asset
         button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
@@ -1480,7 +1480,7 @@ class EvaluationWindow(QWidget):
         buttonYOffset = 300
         buttonSpacing = 230
 
-        # Button 1
+        # Button 1 (KUIS)
         self.button1 = QPushButton("", self)
         pixmap1 = QPixmap(button_path)
         if pixmap1.isNull():
@@ -1498,10 +1498,20 @@ class EvaluationWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.button1.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.button1.move(buttonXOffset, -buttonSize)
         self.button1.clicked.connect(self.on_button1_clicked)
+        self.button1.setEnabled(True)
+        self.button1.show()
 
-        # Button 2
+        # Label for Button 1
+        self.label1 = QLabel("KUIS", self)
+        self.label1.setFont(QFont("Corbel", 20))
+        self.label1.setStyleSheet("color: white; background: transparent;")
+        self.label1.setAlignment(Qt.AlignCenter)
+        self.label1.move(buttonXOffset, -buttonSize)
+        self.label1.setFixedSize(buttonSize, buttonSize)
+
+        # Button 2 (ESSAY)
         self.button2 = QPushButton("", self)
         pixmap2 = QPixmap(button_path)
         if pixmap2.isNull():
@@ -1519,10 +1529,20 @@ class EvaluationWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.button2.move(buttonXOffset + buttonSpacing, -buttonSize)  # Start off-screen top
+        self.button2.move(buttonXOffset + buttonSpacing, -buttonSize)
         self.button2.clicked.connect(self.on_button2_clicked)
+        self.button2.setEnabled(True)
+        self.button2.show()
 
-        # Button 3
+        # Label for Button 2
+        self.label2 = QLabel("ESSAY", self)
+        self.label2.setFont(QFont("Corbel", 20))
+        self.label2.setStyleSheet("color: white; background: transparent;")
+        self.label2.setAlignment(Qt.AlignCenter)
+        self.label2.move(buttonXOffset + buttonSpacing, -buttonSize)
+        self.label2.setFixedSize(buttonSize, buttonSize)
+
+        # Button 3 (ISIAN)
         self.button3 = QPushButton("", self)
         pixmap3 = QPixmap(button_path)
         if pixmap3.isNull():
@@ -1540,10 +1560,20 @@ class EvaluationWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.button3.move(buttonXOffset + 2 * buttonSpacing, -buttonSize)  # Start off-screen top
+        self.button3.move(buttonXOffset + 2 * buttonSpacing, -buttonSize)
         self.button3.clicked.connect(self.on_button3_clicked)
+        self.button3.setEnabled(True)
+        self.button3.show()
 
-        # Button 4
+        # Label for Button 3
+        self.label3 = QLabel("ISIAN", self)
+        self.label3.setFont(QFont("Corbel", 20))
+        self.label3.setStyleSheet("color: white; background: transparent;")
+        self.label3.setAlignment(Qt.AlignCenter)
+        self.label3.move(buttonXOffset + 2 * buttonSpacing, -buttonSize)
+        self.label3.setFixedSize(buttonSize, buttonSize)
+
+        # Button 4 (TUGAS PROYEK)
         self.button4 = QPushButton("", self)
         pixmap4 = QPixmap(button_path)
         if pixmap4.isNull():
@@ -1561,10 +1591,20 @@ class EvaluationWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.button4.move(buttonXOffset + 3 * buttonSpacing, -buttonSize)  # Start off-screen top
+        self.button4.move(buttonXOffset + 3 * buttonSpacing, -buttonSize)
         self.button4.clicked.connect(self.on_button4_clicked)
+        self.button4.setEnabled(True)
+        self.button4.show()
 
-        # Animation setup for all elements
+        # Label for Button 4
+        self.label4 = QLabel("TUGAS \n PROYEK", self)
+        self.label4.setFont(QFont("Corbel", 20))
+        self.label4.setStyleSheet("color: white; background: transparent;")
+        self.label4.setAlignment(Qt.AlignCenter)
+        self.label4.move(buttonXOffset + 3 * buttonSpacing, -buttonSize)
+        self.label4.setFixedSize(buttonSize, buttonSize)
+
+        # Animation setup
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
         self.title_anim.setStartValue(QPoint(ROUNDED_LABEL_POS_X, -ROUNDED_LABEL_HEIGHT))
@@ -1577,11 +1617,23 @@ class EvaluationWindow(QWidget):
         self.button1_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
         self.button1_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.label1_anim = QPropertyAnimation(self.label1, b"pos")
+        self.label1_anim.setDuration(500)
+        self.label1_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.label1_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.label1_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         self.button2_anim = QPropertyAnimation(self.button2, b"pos")
         self.button2_anim.setDuration(500)
         self.button2_anim.setStartValue(QPoint(buttonXOffset + buttonSpacing, -buttonSize))
         self.button2_anim.setEndValue(QPoint(buttonXOffset + buttonSpacing, buttonYOffset))
         self.button2_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.label2_anim = QPropertyAnimation(self.label2, b"pos")
+        self.label2_anim.setDuration(500)
+        self.label2_anim.setStartValue(QPoint(buttonXOffset + buttonSpacing, -buttonSize))
+        self.label2_anim.setEndValue(QPoint(buttonXOffset + buttonSpacing, buttonYOffset))
+        self.label2_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
         self.button3_anim = QPropertyAnimation(self.button3, b"pos")
         self.button3_anim.setDuration(500)
@@ -1589,31 +1641,138 @@ class EvaluationWindow(QWidget):
         self.button3_anim.setEndValue(QPoint(buttonXOffset + 2 * buttonSpacing, buttonYOffset))
         self.button3_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.label3_anim = QPropertyAnimation(self.label3, b"pos")
+        self.label3_anim.setDuration(500)
+        self.label3_anim.setStartValue(QPoint(buttonXOffset + 2 * buttonSpacing, -buttonSize))
+        self.label3_anim.setEndValue(QPoint(buttonXOffset + 2 * buttonSpacing, buttonYOffset))
+        self.label3_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         self.button4_anim = QPropertyAnimation(self.button4, b"pos")
         self.button4_anim.setDuration(500)
         self.button4_anim.setStartValue(QPoint(buttonXOffset + 3 * buttonSpacing, -buttonSize))
         self.button4_anim.setEndValue(QPoint(buttonXOffset + 3 * buttonSpacing, buttonYOffset))
         self.button4_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.label4_anim = QPropertyAnimation(self.label4, b"pos")
+        self.label4_anim.setDuration(500)
+        self.label4_anim.setStartValue(QPoint(buttonXOffset + 3 * buttonSpacing, -buttonSize))
+        self.label4_anim.setEndValue(QPoint(buttonXOffset + 3 * buttonSpacing, buttonYOffset))
+        self.label4_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
     def on_button1_clicked(self):
-        print("Button 1 clicked!")
+        print("Button 1 (KUIS) clicked! Opening QuizWindow...")
+        self.quiz_window = QuizWindow()
+        self.quiz_window.show()
+        # self.close()  # Comment out for now
 
     def on_button2_clicked(self):
-        print("Button 2 clicked!")
+        print("Button 2 (ESSAY) clicked!")
+        # Add your essay window logic here if needed
+        # self.essay_window = EssayWindow()
+        # self.essay_window.show()
 
     def on_button3_clicked(self):
-        print("Button 3 clicked!")
+        print("Button 3 (ISIAN) clicked!")
+        # Add your isian window logic here if needed
+        # self.isian_window = IsianWindow()
+        # self.isian_window.show()
 
     def on_button4_clicked(self):
-        print("Button 4 clicked!")
+        print("Button 4 (TUGAS PROYEK) clicked!")
+        # Add your tugas proyek window logic here if needed
+        # self.tugas_window = TugasWindow()
+        # self.tugas_window.show()
 
     def showEvent(self, event):
         super().showEvent(event)
         self.title_anim.start()
         self.button1_anim.start()
+        self.label1_anim.start()
         self.button2_anim.start()
+        self.label2_anim.start()
         self.button3_anim.start()
+        self.label3_anim.start()
         self.button4_anim.start()
+        self.label4_anim.start()
+        self.button1.raise_()
+        self.button2.raise_()
+        self.button3.raise_()
+        self.button4.raise_()
+        print("EvaluationWindow shown, all buttons raised and enabled")
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.fillRect(self.rect(), Qt.black)
+        x = (self.width() - self.pixmap.width()) // 2
+        y = (self.height() - self.pixmap.height()) // 2
+        painter.drawPixmap(x, y, self.pixmap)
+
+class QuizWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Quiz")
+        self.resize(1665, 780)
+        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.pixmap = QPixmap(image_path)
+        if self.pixmap.isNull():
+            print(f"Error: Failed to load image at {image_path}")
+        else:
+            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Make a list that contains all the assets in kuis resource  
+        kuis_resource_dir = os.path.join(os.path.dirname(__file__), "assets", "kuisresource")
+        self.kuis_assets = [
+            os.path.join(kuis_resource_dir, "basketball.png"),
+            os.path.join(kuis_resource_dir, "carrotCone.png"),
+            os.path.join(kuis_resource_dir, "cocaCola.png"),
+            os.path.join(kuis_resource_dir, "diceCube.png"),
+            os.path.join(kuis_resource_dir, "farmerHat.png"),
+            os.path.join(kuis_resource_dir, "giftCube.png"),
+            os.path.join(kuis_resource_dir, "iceCream.png"),
+            os.path.join(kuis_resource_dir, "partyHatCone.png"),
+            os.path.join(kuis_resource_dir, "schoolBus.png"),
+            os.path.join(kuis_resource_dir, "teddyBear.png"),
+            os.path.join(kuis_resource_dir, "umbrellaCone.png"),
+            os.path.join(kuis_resource_dir, "vaultCube.png"),
+        ]   
+
+        # Create labels for each image
+        self.image_labels = []
+        image_size = 150
+        start_x = 200
+        start_y = 200
+        spacing = 200
+
+        for i, asset_path in enumerate(self.kuis_assets):
+            label = QLabel(self)
+            pixmap = QPixmap(asset_path)
+            if pixmap.isNull():
+                print(f"Error: Failed to load image at {asset_path}")
+            else:
+                pixmap = pixmap.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                label.setPixmap(pixmap)
+            label.setFixedSize(image_size, image_size)
+            row = i // 4
+            col = i % 4
+            x = start_x + col * spacing
+            y = start_y + row * spacing
+            label.move(x, -image_size)  # Start off-screen top
+            self.image_labels.append(label)
+
+        # Animation setup for all image labels
+        self.image_anims = []
+        for i, label in enumerate(self.image_labels):
+            anim = QPropertyAnimation(label, b"pos")
+            anim.setDuration(500)
+            anim.setStartValue(QPoint(start_x + (i % 4) * spacing, -150))
+            anim.setEndValue(QPoint(start_x + (i % 4) * spacing, start_y + (i // 4) * spacing))
+            anim.setEasingCurve(QEasingCurve.InOutQuad)
+            self.image_anims.append(anim)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        for anim in self.image_anims:
+            anim.start()
 
     def paintEvent(self, event):
         painter = QPainter(self)
