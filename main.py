@@ -1956,4 +1956,4 @@ class EssayWindow(QWidget):
 app = QApplication(sys.argv)
 window = MainMenuWindow()
 window.show()
-sys.exit(app.exec_())
+sys.exit(app.exec_()) #test
