@@ -1672,8 +1672,9 @@ class EvaluationWindow(QWidget):
     def on_button2_clicked(self):
         print("Button 2 (ESSAY) clicked!")
         # Add your essay window logic here if needed
-        # self.essay_window = EssayWindow()
-        # self.essay_window.show()
+        self.essay_window = EssayWindow()
+        self.essay_window.show()
+        self.close()
 
     def on_button3_clicked(self):
         print("Button 3 (ISIAN) clicked!")
@@ -1864,42 +1865,40 @@ class QuizWindow(QWidget):
         y = (self.height() - self.pixmap.height()) // 2
         painter.drawPixmap(x, y, self.pixmap)
 
-class IsianWindow(QWidget):
+class EssayWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Isian")
+        self.setWindowTitle("Essay")
         self.resize(1665, 780)
-        image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
-        self.pixmap = QPixmap(image_path)
-        if self.pixmap.isNull():
-            print(f"Error: Failed to load image at {image_path}")
+        bg_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.bg_pixmap = QPixmap(bg_path)
+        if self.bg_pixmap.isNull():
+            print(f"Error: Failed to load background at {bg_path}")
         else:
-            self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.bg_pixmap = self.bg_pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        # Description label styled like QuizWindow
-        self.description_label = QLabel("Identify the 3D shapes in this new window! Click to explore.", self)
-        self.description_label.setFont(QFont("Cooper Black", 60))
-        self.description_label.setStyleSheet(f"color: #333F50; background-color: {ROUNDED_LABEL_COLOR}; border: 3px solid black; border-radius: 10px;")
-        self.description_label.setFixedWidth(ROUNDED_LABEL_WIDTH)
-        self.description_label.setFixedHeight(ROUNDED_LABEL_HEIGHT)
-        self.description_label.setAlignment(Qt.AlignCenter)
-        self.description_label.move(211, -100)  # Match QuizWindow's latest x, start off-screen above
+        cloud_path = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")
+        self.cloud_pixmap = QPixmap(cloud_path)
+        if self.cloud_pixmap.isNull():
+            print(f"Error: Failed to load cloud texture at {cloud_path}")
+        else:
+            self.cloud_pixmap = self.cloud_pixmap.scaled(600, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Adjusted size for center
 
-        # Decorative Quiz Button
+        # Essay Button (matching QuizWindow style)
         button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
         buttonSize = 220
-        buttonXOffset = 532  # Centered like QuizWindow
-        buttonYOffset = 120  # Above description
-        self.quiz_button = QPushButton("", self)
+        buttonXOffset = 1300  # Moved to 1300
+        buttonYOffset = 60    # Moved to 60
+        self.essay_button = QPushButton("", self)
         pixmap = QPixmap(button_path)
         if pixmap.isNull():
             print(f"Error: Failed to load image at {button_path}")
         else:
             pixmap = pixmap.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.quiz_button.setIcon(QIcon(pixmap))
-            self.quiz_button.setIconSize(QSize(buttonSize, buttonSize))
-        self.quiz_button.setFixedSize(buttonSize, buttonSize)
-        self.quiz_button.setStyleSheet("""
+            self.essay_button.setIcon(QIcon(pixmap))
+            self.essay_button.setIconSize(QSize(buttonSize, buttonSize))
+        self.essay_button.setFixedSize(buttonSize, buttonSize)
+        self.essay_button.setStyleSheet("""
             QPushButton {
                 background: transparent;
                 border: none;
@@ -1907,50 +1906,52 @@ class IsianWindow(QWidget):
                 margin: 0px;
             }
         """)
-        self.quiz_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.essay_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
 
-        # Label for Quiz Button
-        self.quiz_label = QLabel("QUIZ", self)
-        self.quiz_label.setFont(QFont("Corbel", 20))
-        self.quiz_label.setStyleSheet("color: white; background: transparent;")
-        self.quiz_label.setAlignment(Qt.AlignCenter)
-        self.quiz_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
-        self.quiz_label.setFixedSize(buttonSize, buttonSize)
-        self.quiz_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
+        # Label for Essay Button
+        self.essay_label = QLabel("ESSAY", self)
+        self.essay_label.setFont(QFont("Corbel", 20))
+        self.essay_label.setStyleSheet("color: white; background: transparent;")
+        self.essay_label.setAlignment(Qt.AlignCenter)
+        self.essay_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.essay_label.setFixedSize(buttonSize, buttonSize)
+        self.essay_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
 
-        # Animation setup for description and quiz button
-        self.description_anim = QPropertyAnimation(self.description_label, b"pos")
-        self.description_anim.setDuration(500)
-        self.description_anim.setStartValue(QPoint(211, -100))
-        self.description_anim.setEndValue(QPoint(211, 153))
-        self.description_anim.setEasingCurve(QEasingCurve.InOutQuad)
+        # Corbel Label
+        self.corbel_label = QLabel("Essay Section", self)
+        self.corbel_label.setFont(QFont("Corbel", 40))
+        self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
+        self.corbel_label.setAlignment(Qt.AlignCenter)
+        self.corbel_label.setFixedWidth(600)
+        self.corbel_label.move(532, 100)  # Centered above button
 
-        self.quiz_button_anim = QPropertyAnimation(self.quiz_button, b"pos")
-        self.quiz_button_anim.setDuration(500)
-        self.quiz_button_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
-        self.quiz_button_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
-        self.quiz_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+        # Animation setup for essay button and label
+        self.essay_button_anim = QPropertyAnimation(self.essay_button, b"pos")
+        self.essay_button_anim.setDuration(500)
+        self.essay_button_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.essay_button_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.essay_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
-        self.quiz_label_anim = QPropertyAnimation(self.quiz_label, b"pos")
-        self.quiz_label_anim.setDuration(500)
-        self.quiz_label_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
-        self.quiz_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
-        self.quiz_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+        self.essay_label_anim = QPropertyAnimation(self.essay_label, b"pos")
+        self.essay_label_anim.setDuration(500)
+        self.essay_label_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.essay_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.essay_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
     def showEvent(self, event):
         super().showEvent(event)
-        self.description_anim.start()
-        self.quiz_button_anim.start()
-        self.quiz_label_anim.start()
-        self.quiz_button.raise_()
-        self.quiz_label.raise_()
+        self.essay_button_anim.start()
+        self.essay_label_anim.start()
+        self.essay_button.raise_()
+        self.essay_label.raise_()
+        self.corbel_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        painter.fillRect(self.rect(), Qt.black)
-        x = (self.width() - self.pixmap.width()) // 2
-        y = (self.height() - self.pixmap.height()) // 2
-        painter.drawPixmap(x, y, self.pixmap)
+        painter.drawPixmap(0, 0, self.bg_pixmap)  # Draw mainBackground.png as background
+        center_x = (self.width() - self.cloud_pixmap.width()) // 2
+        center_y = (self.height() - self.cloud_pixmap.height()) // 2
+        painter.drawPixmap(center_x, center_y, self.cloud_pixmap)  # Draw cloud texture centered
 
 app = QApplication(sys.argv)
 window = MainMenuWindow()
