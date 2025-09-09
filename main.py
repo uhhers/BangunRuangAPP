@@ -1678,9 +1678,9 @@ class EvaluationWindow(QWidget):
 
     def on_button3_clicked(self):
         print("Button 3 (ISIAN) clicked!")
-        # Add your isian window logic here if needed
-        # self.isian_window = IsianWindow()
-        # self.isian_window.show()
+        self.isian_window = IsianWindow()
+        self.isian_window.show()
+        self.close()
 
     def on_button4_clicked(self):
         print("Button 4 (TUGAS PROYEK) clicked!")
@@ -1810,7 +1810,7 @@ class QuizWindow(QWidget):
 
         # Label for Quiz Button
         self.quiz_label = QLabel("QUIZ", self)
-        self.quiz_label.setFont(QFont("Corbel", 20))
+        self.quiz_label.setFont(QFont("Corbel", 16))
         self.quiz_label.setStyleSheet("color: white; background: transparent;")
         self.quiz_label.setAlignment(Qt.AlignCenter)
         self.quiz_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
@@ -1882,7 +1882,15 @@ class EssayWindow(QWidget):
         if self.cloud_pixmap.isNull():
             print(f"Error: Failed to load cloud texture at {cloud_path}")
         else:
-            self.cloud_pixmap = self.cloud_pixmap.scaled(600, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Adjusted size for center
+            self.cloud_pixmap = self.cloud_pixmap.scaled(int(600 * 1.6), int(400 * 1.6), Qt.KeepAspectRatio, Qt.SmoothTransformation)  # Adjusted size for center
+
+        # Offset for cloud position
+        self.cloud_offset_x = -200  # Horizontal offset
+        self.cloud_offset_y = 25  # Vertical offset
+
+        # Offset for description label position
+        self.desc_offset_x = -100  # Horizontal offset
+        self.desc_offset_y = 0  # Vertical offset
 
         # Essay Button (matching QuizWindow style)
         button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
@@ -1917,15 +1925,22 @@ class EssayWindow(QWidget):
         self.essay_label.setFixedSize(buttonSize, buttonSize)
         self.essay_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
 
-        # Corbel Label
-        self.corbel_label = QLabel("Essay Section", self)
-        self.corbel_label.setFont(QFont("Corbel", 40))
-        self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
-        self.corbel_label.setAlignment(Qt.AlignCenter)
-        self.corbel_label.setFixedWidth(600)
-        self.corbel_label.move(532, 100)  # Centered above button
+        # Description Label (re-added from previous version)
+        self.description_label = QLabel("""
+1. Sebutkan benda di rumah kalian yang berbentuk tabung!
+2. Sebutkan 3 benda berbentuk bola!
+3. Apakah bentuk gelas yang biasa kalian gunakan untuk minum?
+4. Sebutkan benda berbentuk balok yang ada di kamar kalian!
+5. Sebutkan benda di ruang kelas kalian yang berbentuk kubus!
+        """, self)
+        self.description_label.setFont(QFont("Corbel", 16))
+        self.description_label.setStyleSheet("color: #333F50; background: transparent;")
+        self.description_label.setWordWrap(True)
+        self.description_label.setFixedWidth(600)
+        self.description_label.setAlignment(Qt.AlignLeft)
+        self.description_label.move(432 + self.desc_offset_x, 200 + self.desc_offset_y)  # Centered within cloud with offset
 
-        # Animation setup for essay button and label
+        # Animation setup for essay button, label, and description
         self.essay_button_anim = QPropertyAnimation(self.essay_button, b"pos")
         self.essay_button_anim.setDuration(500)
         self.essay_button_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
@@ -1938,21 +1953,106 @@ class EssayWindow(QWidget):
         self.essay_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
         self.essay_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.description_anim = QPropertyAnimation(self.description_label, b"pos")
+        self.description_anim.setDuration(500)
+        self.description_anim.setStartValue(QPoint(432 + self.desc_offset_x, -200))
+        self.description_anim.setEndValue(QPoint(432 + self.desc_offset_x, 200 + self.desc_offset_y))
+        self.description_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
     def showEvent(self, event):
         super().showEvent(event)
         self.essay_button_anim.start()
         self.essay_label_anim.start()
+        self.description_anim.start()
         self.essay_button.raise_()
         self.essay_label.raise_()
+        self.description_label.raise_()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.drawPixmap(0, 0, self.bg_pixmap)  # Draw mainBackground.png as background
+        center_x = (self.width() - self.cloud_pixmap.width()) // 2 + self.cloud_offset_x
+        center_y = (self.height() - self.cloud_pixmap.height()) // 2 + self.cloud_offset_y
+        painter.drawPixmap(center_x, center_y, self.cloud_pixmap)  # Draw cloud texture centered with offset
+
+class IsianWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Isian")
+        self.resize(1665, 780)
+        bg_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.bg_pixmap = QPixmap(bg_path)
+        if self.bg_pixmap.isNull():
+            print(f"Error: Failed to load background at {bg_path}")
+        else:
+            self.bg_pixmap = self.bg_pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Decorative Button (matching previous style)
+        button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        buttonSize = 220
+        buttonXOffset = 1300  # Moved to 1300
+        buttonYOffset = 60    # Moved to 60
+        self.isian_button = QPushButton("", self)
+        pixmap = QPixmap(button_path)
+        if pixmap.isNull():
+            print(f"Error: Failed to load image at {button_path}")
+        else:
+            pixmap = pixmap.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.isian_button.setIcon(QIcon(pixmap))
+            self.isian_button.setIconSize(QSize(buttonSize, buttonSize))
+        self.isian_button.setFixedSize(buttonSize, buttonSize)
+        self.isian_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.isian_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
+
+        # Label for Isian Button
+        self.isian_label = QLabel("ISIAN", self)
+        self.isian_label.setFont(QFont("Corbel", 20))
+        self.isian_label.setStyleSheet("color: white; background: transparent;")
+        self.isian_label.setAlignment(Qt.AlignCenter)
+        self.isian_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.isian_label.setFixedSize(buttonSize, buttonSize)
+        self.isian_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
+
+        # Corbel Label
+        self.corbel_label = QLabel("Isian Section", self)
+        self.corbel_label.setFont(QFont("Corbel", 40))
+        self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
+        self.corbel_label.setAlignment(Qt.AlignCenter)
+        self.corbel_label.setFixedWidth(600)
+        self.corbel_label.move(532, 370)  # Centered vertically
+
+        # Animation setup for isian button and label
+        self.isian_button_anim = QPropertyAnimation(self.isian_button, b"pos")
+        self.isian_button_anim.setDuration(500)
+        self.isian_button_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.isian_button_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.isian_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.isian_label_anim = QPropertyAnimation(self.isian_label, b"pos")
+        self.isian_label_anim.setDuration(500)
+        self.isian_label_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.isian_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.isian_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.isian_button_anim.start()
+        self.isian_label_anim.start()
+        self.isian_button.raise_()
+        self.isian_label.raise_()
         self.corbel_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(0, 0, self.bg_pixmap)  # Draw mainBackground.png as background
-        center_x = (self.width() - self.cloud_pixmap.width()) // 2
-        center_y = (self.height() - self.cloud_pixmap.height()) // 2
-        painter.drawPixmap(center_x, center_y, self.cloud_pixmap)  # Draw cloud texture centered
-
+        
 app = QApplication(sys.argv)
 window = MainMenuWindow()
 window.show()
