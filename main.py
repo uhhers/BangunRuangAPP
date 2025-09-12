@@ -1940,6 +1940,47 @@ class EssayWindow(QWidget):
         self.description_label.setAlignment(Qt.AlignLeft)
         self.description_label.move(432 + self.desc_offset_x, 200 + self.desc_offset_y)  # Centered within cloud with offset
 
+        # 3 Images
+        image_paths = [
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "basketball.png"),
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "cocaCola.png"),
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "tissueBlock.png")
+        ]
+        image_size = 150
+        image_y = 450
+        image_spacing = 300
+        image_start_x = 200
+
+        self.image1 = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image1.setPixmap(pixmap1)
+        self.image1.setFixedSize(image_size, image_size)
+        self.image1.move(-image_size, image_y)  # Start off-screen left
+
+        self.image2 = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image2.setPixmap(pixmap2)
+        self.image2.setFixedSize(image_size, image_size)
+        self.image2.move(image_start_x + image_spacing, image_y)  # Middle position
+
+        self.image3 = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image3.setPixmap(pixmap3)
+        self.image3.setFixedSize(image_size, image_size)
+        self.image3.move(image_start_x + 2 * image_spacing, image_y)  # Right position
+
         # Animation setup for essay button, label, and description
         self.essay_button_anim = QPropertyAnimation(self.essay_button, b"pos")
         self.essay_button_anim.setDuration(500)
@@ -1959,14 +2000,38 @@ class EssayWindow(QWidget):
         self.description_anim.setEndValue(QPoint(432 + self.desc_offset_x, 200 + self.desc_offset_y))
         self.description_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.image1_anim = QPropertyAnimation(self.image1, b"pos")
+        self.image1_anim.setDuration(500)
+        self.image1_anim.setStartValue(QPoint(-image_size, image_y))
+        self.image1_anim.setEndValue(QPoint(image_start_x, image_y))
+        self.image1_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.image2_anim = QPropertyAnimation(self.image2, b"pos")
+        self.image2_anim.setDuration(500)
+        self.image2_anim.setStartValue(QPoint(image_start_x + image_spacing, image_y))
+        self.image2_anim.setEndValue(QPoint(image_start_x + image_spacing, image_y))
+        self.image2_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.image3_anim = QPropertyAnimation(self.image3, b"pos")
+        self.image3_anim.setDuration(500)
+        self.image3_anim.setStartValue(QPoint(image_start_x + 2 * image_spacing, image_y))
+        self.image3_anim.setEndValue(QPoint(image_start_x + 2 * image_spacing, image_y))
+        self.image3_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
     def showEvent(self, event):
         super().showEvent(event)
         self.essay_button_anim.start()
         self.essay_label_anim.start()
         self.description_anim.start()
+        self.image1_anim.start()
+        self.image2_anim.start()
+        self.image3_anim.start()
         self.essay_button.raise_()
         self.essay_label.raise_()
         self.description_label.raise_()
+        self.image1.raise_()
+        self.image2.raise_()
+        self.image3.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2021,8 +2086,13 @@ class IsianWindow(QWidget):
         self.isian_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
 
         # Corbel Label
-        self.corbel_label = QLabel("Isian Section", self)
-        self.corbel_label.setFont(QFont("Corbel", 40))
+        self.corbel_label = QLabel("""Gambar di samping berbentuk … 
+Bus sekolah berbentuk
+Gambar di samping berbentuk
+Buah melon berbentuk
+Gambar di samping berbentuk
+""", self)
+        self.corbel_label.setFont(QFont("Corbel", 15))
         self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
         self.corbel_label.setAlignment(Qt.AlignCenter)
         self.corbel_label.setFixedWidth(600)
