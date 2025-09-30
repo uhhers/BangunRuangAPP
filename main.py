@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
 from PyQt5.QtGui import QPixmap, QPainter, QFont, QIcon
-from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QEvent, QPoint  # Added QPoint here
+from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QEvent, QPoint  # Added QPoint 
+
 import sys
 import os
 
@@ -1684,9 +1685,9 @@ class EvaluationWindow(QWidget):
 
     def on_button4_clicked(self):
         print("Button 4 (TUGAS PROYEK) clicked!")
-        # Add your tugas proyek window logic here if needed
-        # self.tugas_window = TugasWindow()
-        # self.tugas_window.show()
+        self.tugas_window = TugasProyekWindow()
+        self.tugas_window.show()
+        self.close()
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -1940,47 +1941,6 @@ class EssayWindow(QWidget):
         self.description_label.setAlignment(Qt.AlignLeft)
         self.description_label.move(432 + self.desc_offset_x, 200 + self.desc_offset_y)  # Centered within cloud with offset
 
-        # 3 Images
-        image_paths = [
-            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "basketball.png"),
-            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "cocaCola.png"),
-            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "tissueBlock.png")
-        ]
-        image_size = 150
-        image_y = 450
-        image_spacing = 300
-        image_start_x = 200
-
-        self.image1 = QLabel(self)
-        pixmap1 = QPixmap(image_paths[0])
-        if pixmap1.isNull():
-            print(f"Error: Failed to load image at {image_paths[0]}")
-        else:
-            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.image1.setPixmap(pixmap1)
-        self.image1.setFixedSize(image_size, image_size)
-        self.image1.move(-image_size, image_y)  # Start off-screen left
-
-        self.image2 = QLabel(self)
-        pixmap2 = QPixmap(image_paths[1])
-        if pixmap2.isNull():
-            print(f"Error: Failed to load image at {image_paths[1]}")
-        else:
-            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.image2.setPixmap(pixmap2)
-        self.image2.setFixedSize(image_size, image_size)
-        self.image2.move(image_start_x + image_spacing, image_y)  # Middle position
-
-        self.image3 = QLabel(self)
-        pixmap3 = QPixmap(image_paths[2])
-        if pixmap3.isNull():
-            print(f"Error: Failed to load image at {image_paths[2]}")
-        else:
-            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.image3.setPixmap(pixmap3)
-        self.image3.setFixedSize(image_size, image_size)
-        self.image3.move(image_start_x + 2 * image_spacing, image_y)  # Right position
-
         # Animation setup for essay button, label, and description
         self.essay_button_anim = QPropertyAnimation(self.essay_button, b"pos")
         self.essay_button_anim.setDuration(500)
@@ -2000,38 +1960,15 @@ class EssayWindow(QWidget):
         self.description_anim.setEndValue(QPoint(432 + self.desc_offset_x, 200 + self.desc_offset_y))
         self.description_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
-        self.image1_anim = QPropertyAnimation(self.image1, b"pos")
-        self.image1_anim.setDuration(500)
-        self.image1_anim.setStartValue(QPoint(-image_size, image_y))
-        self.image1_anim.setEndValue(QPoint(image_start_x, image_y))
-        self.image1_anim.setEasingCurve(QEasingCurve.InOutQuad)
-
-        self.image2_anim = QPropertyAnimation(self.image2, b"pos")
-        self.image2_anim.setDuration(500)
-        self.image2_anim.setStartValue(QPoint(image_start_x + image_spacing, image_y))
-        self.image2_anim.setEndValue(QPoint(image_start_x + image_spacing, image_y))
-        self.image2_anim.setEasingCurve(QEasingCurve.InOutQuad)
-
-        self.image3_anim = QPropertyAnimation(self.image3, b"pos")
-        self.image3_anim.setDuration(500)
-        self.image3_anim.setStartValue(QPoint(image_start_x + 2 * image_spacing, image_y))
-        self.image3_anim.setEndValue(QPoint(image_start_x + 2 * image_spacing, image_y))
-        self.image3_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
     def showEvent(self, event):
         super().showEvent(event)
         self.essay_button_anim.start()
         self.essay_label_anim.start()
         self.description_anim.start()
-        self.image1_anim.start()
-        self.image2_anim.start()
-        self.image3_anim.start()
         self.essay_button.raise_()
         self.essay_label.raise_()
         self.description_label.raise_()
-        self.image1.raise_()
-        self.image2.raise_()
-        self.image3.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2086,17 +2023,65 @@ class IsianWindow(QWidget):
         self.isian_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
 
         # Corbel Label
-        self.corbel_label = QLabel("""Gambar di samping berbentuk … 
-Bus sekolah berbentuk
-Gambar di samping berbentuk
-Buah melon berbentuk
-Gambar di samping berbentuk
-""", self)
+        self.corbel_label = QLabel("""1. Gambar di samping berbentuk …
+                                   
+                                   
+
+        
+        2. Bus sekolah berbentuk...
+        
+        3. Gambar di samping berbentuk...
+                                   
+        4. Buah melon berbentuk...
+                                                
+                                   
+        5. Gambar di samping berbentuk\n""", self)
         self.corbel_label.setFont(QFont("Corbel", 15))
         self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
         self.corbel_label.setAlignment(Qt.AlignCenter)
         self.corbel_label.setFixedWidth(600)
-        self.corbel_label.move(532, 370)  # Centered vertically
+        self.corbel_label.move(632, 200)  # Centered vertically
+
+        # 3 Images arranged vertically
+        image_paths = [
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "basketball.png"),
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "cocaCola.png"),
+            os.path.join(os.path.dirname(__file__), "assets", "kuisresource", "tissueBlock.png")
+        ]
+        image_size = 150
+        image_x = 500  # Centered horizontally
+        image_y_start = 200  # Starting y-position
+        image_spacing = 200  # Vertical spacing between images
+
+        self.image1 = QLabel(self)
+        pixmap1 = QPixmap(image_paths[0])
+        if pixmap1.isNull():
+            print(f"Error: Failed to load image at {image_paths[0]}")
+        else:
+            pixmap1 = pixmap1.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image1.setPixmap(pixmap1)
+        self.image1.setFixedSize(image_size, image_size)
+        self.image1.move(-image_size, image_y_start)  # Start off-screen left
+
+        self.image2 = QLabel(self)
+        pixmap2 = QPixmap(image_paths[1])
+        if pixmap2.isNull():
+            print(f"Error: Failed to load image at {image_paths[1]}")
+        else:
+            pixmap2 = pixmap2.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image2.setPixmap(pixmap2)
+        self.image2.setFixedSize(image_size, image_size)
+        self.image2.move(image_x, image_y_start + image_spacing)  # Second image below first
+
+        self.image3 = QLabel(self)
+        pixmap3 = QPixmap(image_paths[2])
+        if pixmap3.isNull():
+            print(f"Error: Failed to load image at {image_paths[2]}")
+        else:
+            pixmap3 = pixmap3.scaled(image_size, image_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.image3.setPixmap(pixmap3)
+        self.image3.setFixedSize(image_size, image_size)
+        self.image3.move(image_x, image_y_start + 2 * image_spacing)  # Third image below second
 
         # Animation setup for isian button and label
         self.isian_button_anim = QPropertyAnimation(self.isian_button, b"pos")
@@ -2111,6 +2096,24 @@ Gambar di samping berbentuk
         self.isian_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
         self.isian_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.image1_anim = QPropertyAnimation(self.image1, b"pos")
+        self.image1_anim.setDuration(500)
+        self.image1_anim.setStartValue(QPoint(-image_size, image_y_start))
+        self.image1_anim.setEndValue(QPoint(image_x, image_y_start))
+        self.image1_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.image2_anim = QPropertyAnimation(self.image2, b"pos")
+        self.image2_anim.setDuration(500)
+        self.image2_anim.setStartValue(QPoint(image_x, image_y_start + image_spacing))
+        self.image2_anim.setEndValue(QPoint(image_x, image_y_start + image_spacing))
+        self.image2_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.image3_anim = QPropertyAnimation(self.image3, b"pos")
+        self.image3_anim.setDuration(500)
+        self.image3_anim.setStartValue(QPoint(image_x, image_y_start + 2 * image_spacing))
+        self.image3_anim.setEndValue(QPoint(image_x, image_y_start + 2 * image_spacing))
+        self.image3_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
     def showEvent(self, event):
         super().showEvent(event)
         self.isian_button_anim.start()
@@ -2118,11 +2121,109 @@ Gambar di samping berbentuk
         self.isian_button.raise_()
         self.isian_label.raise_()
         self.corbel_label.raise_()
+        self.image1_anim.start()
+        self.image2_anim.start()
+        self.image3_anim.start()
+        self.image1.raise_()
+        self.image2.raise_()
+        self.image3.raise_()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.drawPixmap(0, 0, self.bg_pixmap)  # Draw mainBackground.png as background   
+
+class TugasProyekWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Tugas Proyek")
+        self.resize(1665, 780)
+        bg_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
+        self.bg_pixmap = QPixmap(bg_path)
+        if self.bg_pixmap.isNull():
+            print(f"Error: Failed to load background at {bg_path}")
+        else:
+            self.bg_pixmap = self.bg_pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        cloud_path = os.path.join(os.path.dirname(__file__), "assets", "materiresource", "nontransparentCloud.png")
+        self.cloud_pixmap = QPixmap(cloud_path)
+        if self.cloud_pixmap.isNull():
+            print(f"Error: Failed to load cloud texture at {cloud_path}")
+        else:
+            self.cloud_pixmap = self.cloud_pixmap.scaled(int(600 * 1.6), int(400 * 1.6), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        # Offset for cloud position
+        self.cloud_offset_x = -200  # Horizontal offset
+        self.cloud_offset_y = 25   # Vertical offset
+
+        # Decorative Button (matching EssayWindow style)
+        button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        buttonSize = 220
+        buttonXOffset = 1300  # Moved to 1300
+        buttonYOffset = 60    # Moved to 60
+        self.tugas_button = QPushButton("", self)
+        pixmap = QPixmap(button_path)
+        if pixmap.isNull():
+            print(f"Error: Failed to load image at {button_path}")
+        else:
+            pixmap = pixmap.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.tugas_button.setIcon(QIcon(pixmap))
+            self.tugas_button.setIconSize(QSize(buttonSize, buttonSize))
+        self.tugas_button.setFixedSize(buttonSize, buttonSize)
+        self.tugas_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.tugas_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
+
+        # Label for Tugas Button
+        self.tugas_label = QLabel("TUGAS\nPROYEK", self)
+        self.tugas_label.setFont(QFont("Corbel", 20))
+        self.tugas_label.setStyleSheet("color: white; background: transparent;")
+        self.tugas_label.setAlignment(Qt.AlignCenter)
+        self.tugas_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.tugas_label.setFixedSize(buttonSize, buttonSize)
+        self.tugas_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
+
+        # Corbel Label
+        self.corbel_label = QLabel("Pergilah kalian keluar rumah untuk jalan-\njalan sebentar di sekitar lingkungan\n kalian bersama teman atau keluarga\n kalian. Kemudian kalian sebutkan benda-\nbenda yang kalian jumpai, beserta\n bentuk bendanya. Tulis hasilnya dalam\n buku tulis kalian", self)
+        self.corbel_label.setFont(QFont("Corbel", 15))
+        self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
+        self.corbel_label.setAlignment(Qt.AlignCenter)
+        self.corbel_label.setFixedWidth(600)
+        self.corbel_label.move(332, 270)  # Centered vertically
+
+        # Animation setup for tugas button and label
+        self.tugas_button_anim = QPropertyAnimation(self.tugas_button, b"pos")
+        self.tugas_button_anim.setDuration(500)
+        self.tugas_button_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.tugas_button_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.tugas_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.tugas_label_anim = QPropertyAnimation(self.tugas_label, b"pos")
+        self.tugas_label_anim.setDuration(500)
+        self.tugas_label_anim.setStartValue(QPoint(buttonXOffset, -buttonSize))
+        self.tugas_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
+        self.tugas_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.tugas_button_anim.start()
+        self.tugas_label_anim.start()
+        self.tugas_button.raise_()
+        self.tugas_label.raise_()
+        self.corbel_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(0, 0, self.bg_pixmap)  # Draw mainBackground.png as background
-        
+        center_x = (self.width() - self.cloud_pixmap.width()) // 2 + self.cloud_offset_x
+        center_y = (self.height() - self.cloud_pixmap.height()) // 2 + self.cloud_offset_y
+        painter.drawPixmap(center_x, center_y, self.cloud_pixmap)  # Draw cloud texture centered with offset
+      
 app = QApplication(sys.argv)
 window = MainMenuWindow()
 window.show()
