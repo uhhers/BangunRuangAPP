@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QLineEdit
-from PyQt5.QtGui import QPixmap, QPainter, QFont, QIcon
-from PyQt5.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QEvent, QPoint  # Added QPoint 
+from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QTextEdit, QScrollArea, QApplication
+from PyQt5.QtGui import QPixmap, QIcon, QFont, QPainter
+from PyQt5.QtCore import Qt, QPropertyAnimation, QSize, QPoint, QEasingCurve
 
 import sys
 import os
@@ -204,6 +204,54 @@ class MaterialWindow(QWidget):
         self.cylinder_label.move(buttonXOffset + 4 * buttonSpacing + 20, -20)  # Start off-screen top
         self.cylinder_label.setFixedWidth(150)  # Ensure label stays with button
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100  # Smaller size for back button
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)  # Start off-screen top
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -301,6 +349,13 @@ class MaterialWindow(QWidget):
         self.cylinder_window.show()
         self.close()
 
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MainWindow...")
+        self.main_window = Slide2Window()  # Replace with your parent window class
+        self.main_window.show()
+        self.close()
+        
+
     def showEvent(self, event):
         super().showEvent(event)
         self.title_anim.start()
@@ -314,6 +369,10 @@ class MaterialWindow(QWidget):
         self.cubeLabel_anim.start()
         self.cylinderButton_anim.start()
         self.cylinderLabel_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -411,6 +470,54 @@ class CylinderWindow(QWidget):
         self.image4_label.move(-600, 150)  # Start off-screen left
         self.image4_label.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -463,6 +570,14 @@ class CylinderWindow(QWidget):
         self.image2_anim.start()
         self.image3_anim.start()
         self.image4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MaterialWindow...")
+        self.material_window = MaterialWindow()
+        self.material_window.show()
+        self.close()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -560,6 +675,54 @@ class ConeWindow(QWidget):
         self.image4_label.move(-600, 150)  # Start off-screen left
         self.image4_label.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -612,6 +775,18 @@ class ConeWindow(QWidget):
         self.image2_anim.start()
         self.image3_anim.start()
         self.image4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MaterialWindow...")
+        self.material_window = MaterialWindow()
+        self.material_window.show()
+        self.close()
+        
+
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -709,6 +884,54 @@ class BallWindow(QWidget):
         self.image4_label.move(-600, 150)  # Start off-screen left
         self.image4_label.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -761,6 +984,18 @@ class BallWindow(QWidget):
         self.image2_anim.start()
         self.image3_anim.start()
         self.image4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MaterialWindow...")
+        self.material_window = MaterialWindow()
+        self.material_window.show()
+        self.close()
+        
+
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -858,6 +1093,54 @@ class BlockWindow(QWidget):
         self.image4_label.move(-600, 150)  # Start off-screen left
         self.image4_label.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -910,7 +1193,17 @@ class BlockWindow(QWidget):
         self.image2_anim.start()
         self.image3_anim.start()
         self.image4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
 
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MaterialWindow...")
+        self.material_window = MaterialWindow()
+        self.material_window.show()
+        self.close()
+        
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.fillRect(self.rect(), Qt.black)
@@ -1007,6 +1300,54 @@ class CubeWindow(QWidget):
         self.image4_label.move(-600, 150)  # Start off-screen left
         self.image4_label.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -1059,6 +1400,18 @@ class CubeWindow(QWidget):
         self.image2_anim.start()
         self.image3_anim.start()
         self.image4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MaterialWindow...")
+        self.material_window = MaterialWindow()
+        self.material_window.show()
+        self.close()
+        
+
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -1130,6 +1483,54 @@ class KIKDWindow(QWidget):
         self.cloudImage.move(-CLOUD_IMAGE_WIDTH, ((780 - CLOUD_IMAGE_HEIGHT) // 2) + 100)  # Start off-screen left
         self.cloudImage.lower()
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100  # Smaller size for back button
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)  # Start off-screen top
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -1155,12 +1556,22 @@ class KIKDWindow(QWidget):
         self.cloud_anim.setEndValue(QPoint(((1665 - CLOUD_IMAGE_WIDTH) // 2) + 0, ((780 - CLOUD_IMAGE_HEIGHT) // 2) + 100))
         self.cloud_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MainWindow...")
+        self.main_window = Slide2Window()  # Replace with your parent window class
+        self.main_window.show()
+        self.close()
+
     def showEvent(self, event):
         super().showEvent(event)
         self.title_anim.start()
         self.kompetensi_anim.start()
         self.kompetensiDasar_anim.start()
         self.cloud_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.back_button.raise_()
+        self.back_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -1609,6 +2020,54 @@ class EvaluationWindow(QWidget):
         self.label4.setFixedSize(buttonSize, buttonSize)
         self.label4.setAttribute(Qt.WA_TransparentForMouseEvents)  # Make label non-interactive
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100  # Smaller size for back button
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)  # Start off-screen top
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup
         self.title_anim = QPropertyAnimation(self.title_label, b"pos")
         self.title_anim.setDuration(500)
@@ -1688,6 +2147,12 @@ class EvaluationWindow(QWidget):
         self.tugas_window = TugasProyekWindow()
         self.tugas_window.show()
         self.close()
+    
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening MainWindow...")
+        self.main_window = Slide2Window()  # Replace with your parent window class
+        self.main_window.show()
+        self.close()
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -1700,6 +2165,8 @@ class EvaluationWindow(QWidget):
         self.label3_anim.start()
         self.button4_anim.start()
         self.label4_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
         self.button1.raise_()
         self.button2.raise_()
         self.button3.raise_()
@@ -1708,6 +2175,8 @@ class EvaluationWindow(QWidget):
         self.label2.raise_()
         self.label3.raise_()
         self.label4.raise_()
+        self.back_button.raise_()
+        self.back_label.raise_()
         print("EvaluationWindow shown, all buttons and labels raised and enabled")
 
     def paintEvent(self, event):
@@ -1809,6 +2278,54 @@ class QuizWindow(QWidget):
         """)
         self.quiz_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Label for Quiz Button
         self.quiz_label = QLabel("QUIZ", self)
         self.quiz_label.setFont(QFont("Corbel", 16))
@@ -1849,6 +2366,12 @@ class QuizWindow(QWidget):
         self.quiz_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
         self.quiz_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening EvaluationWindow...")
+        self.eval_window = EvaluationWindow()
+        self.eval_window.show()
+        self.close()
+
     def showEvent(self, event):
         super().showEvent(event)
         for anim in self.image_anims:
@@ -1856,8 +2379,12 @@ class QuizWindow(QWidget):
         self.description_anim.start()
         self.quiz_button_anim.start()
         self.quiz_label_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
         self.quiz_button.raise_()
         self.quiz_label.raise_()
+        self.back_button.raise_()
+        self.back_label.raise_()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -1941,6 +2468,54 @@ class EssayWindow(QWidget):
         self.description_label.setAlignment(Qt.AlignLeft)
         self.description_label.move(432 + self.desc_offset_x, 200 + self.desc_offset_y)  # Centered within cloud with offset
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for essay button, label, and description
         self.essay_button_anim = QPropertyAnimation(self.essay_button, b"pos")
         self.essay_button_anim.setDuration(500)
@@ -1966,9 +2541,19 @@ class EssayWindow(QWidget):
         self.essay_button_anim.start()
         self.essay_label_anim.start()
         self.description_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
         self.essay_button.raise_()
         self.essay_label.raise_()
         self.description_label.raise_()
+        self.back_button.raise_()
+        self.back_label.raise_()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening EvaluationWindow...")
+        self.eval_window = EvaluationWindow()
+        self.eval_window.show()
+        self.close()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2083,6 +2668,54 @@ class IsianWindow(QWidget):
         self.image3.setFixedSize(image_size, image_size)
         self.image3.move(image_x, image_y_start + 2 * image_spacing)  # Third image below second
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for isian button and label
         self.isian_button_anim = QPropertyAnimation(self.isian_button, b"pos")
         self.isian_button_anim.setDuration(500)
@@ -2118,15 +2751,25 @@ class IsianWindow(QWidget):
         super().showEvent(event)
         self.isian_button_anim.start()
         self.isian_label_anim.start()
-        self.isian_button.raise_()
-        self.isian_label.raise_()
-        self.corbel_label.raise_()
         self.image1_anim.start()
         self.image2_anim.start()
         self.image3_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
+        self.isian_button.raise_()
+        self.isian_label.raise_()
+        self.corbel_label.raise_()
         self.image1.raise_()
         self.image2.raise_()
         self.image3.raise_()
+        self.back_button.raise_()
+        self.back_label.raise_()
+    
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening EvaluationWindow...")
+        self.eval_window = EvaluationWindow()
+        self.eval_window.show()
+        self.close()
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2196,6 +2839,54 @@ class TugasProyekWindow(QWidget):
         self.corbel_label.setFixedWidth(600)
         self.corbel_label.move(332, 270)  # Centered vertically
 
+        # Back Button
+        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        back_button_size = 100
+        self.back_button = QPushButton("", self)
+        back_pixmap = QPixmap(back_button_path)
+        if back_pixmap.isNull():
+            print(f"Error: Failed to load image at {back_button_path}")
+        else:
+            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(back_pixmap))
+            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+        """)
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
+        self.back_button.setEnabled(True)
+        self.back_button.show()
+
+        # Back Button Label
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animation for Back Button
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        # Animation for Back Label
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
         # Animation setup for tugas button and label
         self.tugas_button_anim = QPropertyAnimation(self.tugas_button, b"pos")
         self.tugas_button_anim.setDuration(500)
@@ -2213,9 +2904,19 @@ class TugasProyekWindow(QWidget):
         super().showEvent(event)
         self.tugas_button_anim.start()
         self.tugas_label_anim.start()
+        self.back_button_anim.start()
+        self.back_label_anim.start()
         self.tugas_button.raise_()
         self.tugas_label.raise_()
         self.corbel_label.raise_()
+        self.back_button.raise_()
+        self.back_label.raise_()
+
+    def on_back_button_clicked(self):
+        print("Back button clicked! Opening EvaluationWindow...")
+        self.eval_window = EvaluationWindow()
+        self.eval_window.show()
+        self.close()
 
     def paintEvent(self, event):
         painter = QPainter(self)
