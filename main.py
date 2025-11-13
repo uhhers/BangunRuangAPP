@@ -1,9 +1,23 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QTextEdit, QScrollArea, QApplication
-from PyQt5.QtGui import QPixmap, QIcon, QFont, QPainter
-from PyQt5.QtCore import Qt, QPropertyAnimation, QSize, QPoint, QEasingCurve
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QApplication
+from PyQt5.QtGui import QPixmap, QIcon, QFont, QPainter, QTransform
+from PyQt5.QtCore import Qt, QPoint, QEasingCurve, pyqtProperty, QUrl, QPropertyAnimation, QSize
+from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QMediaPlaylist
 
 import sys
 import os
+
+# Create global player (outside any class)
+music_player = QMediaPlayer()
+playlist = QMediaPlaylist()
+playlist.setPlaybackMode(QMediaPlaylist.Loop)  # loops forever
+
+# Add your music file
+music_path = os.path.join(os.path.dirname(__file__), "assets", "music", "bgm.mp3")
+playlist.addMedia(QMediaContent(QUrl.fromLocalFile(music_path)))
+
+music_player.setPlaylist(playlist)
+music_player.setVolume(30)  # 0-100, 30 = chill volume
+music_player.play()
 
 # Global variables for rounded square label properties
 ROUNDED_LABEL_WIDTH = 850
@@ -1634,7 +1648,7 @@ class Slide2Window(QWidget):
         self.bookButton.clicked.connect(self.on_book_clicked)
 
         # Label for Books button
-        self.book_label = QLabel("Books", self)
+        self.book_label = QLabel("Materi", self)
         self.book_label.setFont(QFont("Cooper Black", 20))
         self.book_label.setStyleSheet("color: #333F50; background: transparent;")
         self.book_label.move(buttonXOffset + 20, -20)  # Start off-screen top
@@ -1690,11 +1704,11 @@ class Slide2Window(QWidget):
         self.checklistButton.clicked.connect(self.on_checklist_clicked)
 
         # Label for Checklist button
-        self.checklist_label = QLabel("Checklist", self)
+        self.checklist_label = QLabel("Evaluasi", self)
         self.checklist_label.setFont(QFont("Cooper Black", 20))
         self.checklist_label.setStyleSheet("color: #333F50; background: transparent;")
         self.checklist_label.move(buttonXOffset + 2 * buttonSpacing, -20)  # Start off-screen top
-        self.checklist_label.setFixedWidth(150)  # Ensure label stays with button
+        self.checklist_label.setFixedWidth(200)  # Ensure label stays with button
 
         # Animation setup for all elements
         self.title_anim = QPropertyAnimation(self.label, b"pos")
@@ -2191,6 +2205,8 @@ class QuizWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Quiz")
         self.resize(1665, 780)
+
+        # Background
         image_path = os.path.join(os.path.dirname(__file__), "assets", "mainBackground.png")
         self.pixmap = QPixmap(image_path)
         if self.pixmap.isNull():
@@ -2198,159 +2214,171 @@ class QuizWindow(QWidget):
         else:
             self.pixmap = self.pixmap.scaled(1665, 780, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        # List of kuis assets
-        kuis_resource_dir = os.path.join(os.path.dirname(__file__), "assets", "kuisresource")
+        # SFX
+        sfx_dir = os.path.join(os.path.dirname(__file__), "assets", "sfx")
+        self.correct_sfx = QSoundEffect()
+        self.correct_sfx.setSource(QUrl.fromLocalFile(os.path.join(sfx_dir, "correct.wav")))
+        self.correct_sfx.setVolume(0.7)
+
+        self.wrong_sfx = QSoundEffect()
+        self.wrong_sfx.setSource(QUrl.fromLocalFile(os.path.join(sfx_dir, "wrong.wav")))
+        self.wrong_sfx.setVolume(0.8)
+
+        # Assets
+        kuis_dir = os.path.join(os.path.dirname(__file__), "assets", "kuisresource")
         self.kuis_assets = [
-            os.path.join(kuis_resource_dir, "basketball.png"),
-            os.path.join(kuis_resource_dir, "carrotCone.png"),
-            os.path.join(kuis_resource_dir, "cocaCola.png"),
-            os.path.join(kuis_resource_dir, "diceCube.png"),
-            os.path.join(kuis_resource_dir, "farmerHat.png"),
-            os.path.join(kuis_resource_dir, "giftCube.png"),
-            os.path.join(kuis_resource_dir, "iceCream.png"),
-            os.path.join(kuis_resource_dir, "partyHatCone.png"),
-            os.path.join(kuis_resource_dir, "schoolBus.png"),
-            os.path.join(kuis_resource_dir, "teddyBear.png"),
-            os.path.join(kuis_resource_dir, "umbrellaCone.png"),
-            os.path.join(kuis_resource_dir, "vaultCube.png"),
+            os.path.join(kuis_dir, "basketball.png"),
+            os.path.join(kuis_dir, "carrotCone.png"),
+            os.path.join(kuis_dir, "cocaCola.png"),
+            os.path.join(kuis_dir, "diceCube.png"),
+            os.path.join(kuis_dir, "farmerHat.png"),
+            os.path.join(kuis_dir, "giftCube.png"),
+            os.path.join(kuis_dir, "iceCream.png"),
+            os.path.join(kuis_dir, "partyHatCone.png"),
+            os.path.join(kuis_dir, "schoolBus.png"),
+            os.path.join(kuis_dir, "teddyBear.png"),
+            os.path.join(kuis_dir, "umbrellaCone.png"),
+            os.path.join(kuis_dir, "vaultCube.png"),
         ]
 
-        # Tables for x_offset, y_offset, and size (6x2 grid)
-        self.x_offset = [
-            [150, 300, 420, 580, 750, 870],  # Row 0 (first row)
-            [150, 300, 420, 830, 960, 0]   # Row 1 (second row)
-        ]
-        self.y_offset = [
-            [200, 200, 200, 200, 200, 150],    # Row 0
-            [420, 420, 275, 420, 420, 0]     # Row 1
-        ]
-        self.size = [
-            [150, 150, 150, 150, 150, 230],    # Row 0
-            [150, 150, 450, 150, 150, 0]     # Row 1
-        ]
+        # Correct cone indices
+        self.correct_indices = [1, 6, 7, 10]  # carrotCone, iceCream, partyHatCone, umbrellaCone
 
-        # Create labels for each image
+        # Layout tables
+        self.x_offset = [[150, 300, 420, 580, 750, 870],
+                         [150, 300, 420, 830, 960, 0]]
+        self.y_offset = [[200, 200, 200, 200, 200, 150],
+                         [420, 420, 275, 420, 420, 0]]
+        self.size = [[150, 150, 150, 150, 150, 230],
+                     [150, 150, 450, 150, 150, 0]]
+
+        # Image labels + animations
         self.image_labels = []
+        self.image_anims = []
+        self.wiggle_anims = []
+
+        class RotatableLabel(QLabel):
+            def __init__(self, parent=None):
+                super().__init__(parent)
+                self._rotation = 0
+                self._original_pixmap = None
+
+            def setPixmap(self, pixmap):
+                super().setPixmap(pixmap)
+                self._original_pixmap = pixmap
+
+            def setRotation(self, rotation):
+                self._rotation = rotation
+                if self._original_pixmap:
+                    t = QTransform()
+                    t.translate(self.width() / 2, self.height() / 2)
+                    t.rotate(rotation)
+                    t.translate(-self.width() / 2, -self.height() / 2)
+                    super().setPixmap(self._original_pixmap.transformed(t, Qt.SmoothTransformation))
+
+            def getRotation(self):
+                return self._rotation
+
+            rotation = pyqtProperty(float, getRotation, setRotation)
+
         for row in range(2):
             for col in range(6):
                 idx = row * 6 + col
-                if idx < len(self.kuis_assets):  # Ensure we don't exceed asset list
-                    label = QLabel(self)
-                    pixmap = QPixmap(self.kuis_assets[idx])
-                    if pixmap.isNull():
-                        print(f"Error: Failed to load image at {self.kuis_assets[idx]}")
-                    else:
-                        pixmap = pixmap.scaled(self.size[row][col], self.size[row][col], Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                        label.setPixmap(pixmap)
-                    label.setFixedSize(self.size[row][col], self.size[row][col])
-                    label.move(self.x_offset[row][col], -self.size[row][col])  # Start off-screen top
-                    self.image_labels.append(label)
+                if idx >= len(self.kuis_assets):
+                    continue
 
-        # Description label for all images
+                label = RotatableLabel(self)
+                pix = QPixmap(self.kuis_assets[idx])
+                if not pix.isNull():
+                    pix = pix.scaled(self.size[row][col], self.size[row][col],
+                                     Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    label.setPixmap(pix)
+
+                label.setFixedSize(self.size[row][col], self.size[row][col])
+                label.move(self.x_offset[row][col], -self.size[row][col])
+                label.setCursor(Qt.PointingHandCursor)
+
+                # Events
+                label.mousePressEvent = lambda e, i=idx: self.on_image_clicked(i)
+                label.enterEvent = lambda e, i=idx: self.start_wiggle_anim(i)
+                label.leaveEvent = lambda e, i=idx: self.stop_wiggle_anim(i)
+
+                self.image_labels.append(label)
+
+                # Slide-in
+                slide = QPropertyAnimation(label, b"pos")
+                slide.setDuration(500)
+                slide.setStartValue(QPoint(self.x_offset[row][col], -self.size[row][col]))
+                slide.setEndValue(QPoint(self.x_offset[row][col], self.y_offset[row][col]))
+                slide.setEasingCurve(QEasingCurve.InOutQuad)
+                self.image_anims.append(slide)
+
+                # Wiggle
+                wiggle = QPropertyAnimation(label, b"rotation")
+                wiggle.setDuration(300)
+                wiggle.setKeyValues([(0,0),(0.25,6),(0.5,0),(0.75,-6),(1,0)])
+                wiggle.setLoopCount(-1)
+                self.wiggle_anims.append(wiggle)
+
+        # Description
         self.description_label = QLabel("Carilah benda dengan bentuk kerucut di bawah ini!", self)
         self.description_label.setFont(QFont("Cooper Black", 15))
         self.description_label.setStyleSheet("color: #333F50;")
         self.description_label.setWordWrap(True)
         self.description_label.setFixedWidth(1200)
-        self.description_label.move(211, 3)  # Start off-screen above, centered
+        self.description_label.move(211, 3)
 
-        # Decorative Quiz Button
+        # Decorative QUIZ button
         button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
         buttonSize = 220
-        buttonXOffset = 1300  # Centered with description
-        buttonYOffset = 60  # Above images
+        buttonXOffset = 1300
+        buttonYOffset = 60
+
         self.quiz_button = QPushButton("", self)
-        pixmap = QPixmap(button_path)
-        if pixmap.isNull():
-            print(f"Error: Failed to load image at {button_path}")
-        else:
-            pixmap = pixmap.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.quiz_button.setIcon(QIcon(pixmap))
-            self.quiz_button.setIconSize(QSize(buttonSize, buttonSize))
+        pix = QPixmap(button_path)
+        if not pix.isNull():
+            pix = pix.scaled(buttonSize, buttonSize, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.quiz_button.setIcon(QIcon(pix))
+            self.quiz_button.setIconSize(pix.size())
         self.quiz_button.setFixedSize(buttonSize, buttonSize)
-        self.quiz_button.setStyleSheet("""
-            QPushButton {
-                background: transparent;
-                border: none;
-                padding: 0px;
-                margin: 0px;
-            }
-        """)
-        self.quiz_button.move(buttonXOffset, -buttonSize)  # Start off-screen top
+        self.quiz_button.setStyleSheet("background: transparent; border: none;")
+        self.quiz_button.move(buttonXOffset, -buttonSize)
 
-        # Back Button
-        back_button_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
-        back_button_size = 100
-        self.back_button = QPushButton("", self)
-        back_pixmap = QPixmap(back_button_path)
-        if back_pixmap.isNull():
-            print(f"Error: Failed to load image at {back_button_path}")
-        else:
-            back_pixmap = back_pixmap.scaled(back_button_size, back_button_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.back_button.setIcon(QIcon(back_pixmap))
-            self.back_button.setIconSize(QSize(back_button_size, back_button_size))
-        self.back_button.setFixedSize(back_button_size, back_button_size)
-        self.back_button.setStyleSheet("""
-            QPushButton {
-                background: transparent;
-                border: none;
-                padding: 0px;
-                margin: 0px;
-            }
-        """)
-        self.back_button.move(50, -back_button_size)
-        self.back_button.clicked.connect(self.on_back_button_clicked)
-        self.back_button.setEnabled(True)
-        self.back_button.show()
-
-        # Back Button Label
-        self.back_label = QLabel("BACK", self)
-        self.back_label.setFont(QFont("Corbel", 12))
-        self.back_label.setStyleSheet("color: white; background: transparent;")
-        self.back_label.setAlignment(Qt.AlignCenter)
-        self.back_label.move(50, -back_button_size)
-        self.back_label.setFixedSize(back_button_size, back_button_size)
-        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
-
-        # Animation for Back Button
-        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
-        self.back_button_anim.setDuration(500)
-        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
-        self.back_button_anim.setEndValue(QPoint(50, 50))
-        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
-
-        # Animation for Back Label
-        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
-        self.back_label_anim.setDuration(500)
-        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
-        self.back_label_anim.setEndValue(QPoint(50, 50))
-        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
-
-        # Label for Quiz Button
         self.quiz_label = QLabel("QUIZ", self)
         self.quiz_label.setFont(QFont("Corbel", 16))
         self.quiz_label.setStyleSheet("color: white; background: transparent;")
         self.quiz_label.setAlignment(Qt.AlignCenter)
-        self.quiz_label.move(buttonXOffset, -buttonSize)  # Start off-screen top
         self.quiz_label.setFixedSize(buttonSize, buttonSize)
-        self.quiz_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Prevent hitbox interference
+        self.quiz_label.move(buttonXOffset, -buttonSize)
+        self.quiz_label.setAttribute(Qt.WA_TransparentForMouseEvents)
 
-        # Animation setup for all image labels and description
-        self.image_anims = []
-        for row in range(2):
-            for col in range(6):
-                idx = row * 6 + col
-                if idx < len(self.image_labels):
-                    anim = QPropertyAnimation(self.image_labels[idx], b"pos")
-                    anim.setDuration(500)
-                    anim.setStartValue(QPoint(self.x_offset[row][col], -self.size[row][col]))
-                    anim.setEndValue(QPoint(self.x_offset[row][col], self.y_offset[row][col]))
-                    anim.setEasingCurve(QEasingCurve.InOutQuad)
-                    self.image_anims.append(anim)
+        # Back button
+        back_button_size = 100
+        back_path = os.path.join(os.path.dirname(__file__), "assets", "black thingy.png")
+        self.back_button = QPushButton("", self)
+        bpix = QPixmap(back_path)
+        if not bpix.isNull():
+            bpix = bpix.scaled(back_button_size, back_button_size,
+                               Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.back_button.setIcon(QIcon(bpix))
+            self.back_button.setIconSize(bpix.size())
+        self.back_button.setFixedSize(back_button_size, back_button_size)
+        self.back_button.setStyleSheet("background: transparent; border: none;")
+        self.back_button.move(50, -back_button_size)
+        self.back_button.clicked.connect(self.on_back_button_clicked)
 
+        self.back_label = QLabel("BACK", self)
+        self.back_label.setFont(QFont("Corbel", 12))
+        self.back_label.setStyleSheet("color: white; background: transparent;")
+        self.back_label.setAlignment(Qt.AlignCenter)
+        self.back_label.setFixedSize(back_button_size, back_button_size)
+        self.back_label.move(50, -back_button_size)
+        self.back_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+
+        # Animations
         self.description_anim = QPropertyAnimation(self.description_label, b"pos")
         self.description_anim.setDuration(500)
-        self.description_anim.setStartValue(QPoint(211, -100))  
+        self.description_anim.setStartValue(QPoint(211, -100))
         self.description_anim.setEndValue(QPoint(211, 153))
         self.description_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
@@ -2366,16 +2394,47 @@ class QuizWindow(QWidget):
         self.quiz_label_anim.setEndValue(QPoint(buttonXOffset, buttonYOffset))
         self.quiz_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
 
+        self.back_button_anim = QPropertyAnimation(self.back_button, b"pos")
+        self.back_button_anim.setDuration(500)
+        self.back_button_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_button_anim.setEndValue(QPoint(50, 50))
+        self.back_button_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+        self.back_label_anim = QPropertyAnimation(self.back_label, b"pos")
+        self.back_label_anim.setDuration(500)
+        self.back_label_anim.setStartValue(QPoint(50, -back_button_size))
+        self.back_label_anim.setEndValue(QPoint(50, 50))
+        self.back_label_anim.setEasingCurve(QEasingCurve.InOutQuad)
+
+    # Audio + Click
+    def on_image_clicked(self, idx):
+        if idx in self.correct_indices:
+            self.correct_sfx.play()
+            print("KERUCUT DETECTED! Correct!")
+            # your correct destination here
+        else:
+            self.wrong_sfx.play()
+            print("Wrong!")
+            # your wrong destination here
+
+    def start_wiggle_anim(self, idx):
+        if idx < len(self.wiggle_anims):
+            self.wiggle_anims[idx].start()
+            self.image_labels[idx].raise_()
+
+    def stop_wiggle_anim(self, idx):
+        if idx < len(self.wiggle_anims):
+            self.wiggle_anims[idx].stop()
+            self.image_labels[idx].setRotation(0)
+
     def on_back_button_clicked(self):
-        print("Back button clicked! Opening EvaluationWindow...")
         self.eval_window = EvaluationWindow()
         self.eval_window.show()
         self.close()
 
     def showEvent(self, event):
         super().showEvent(event)
-        for anim in self.image_anims:
-            anim.start()
+        for a in self.image_anims: a.start()
         self.description_anim.start()
         self.quiz_button_anim.start()
         self.quiz_label_anim.start()
@@ -2387,11 +2446,11 @@ class QuizWindow(QWidget):
         self.back_label.raise_()
 
     def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.fillRect(self.rect(), Qt.black)
+        p = QPainter(self)
+        p.fillRect(self.rect(), Qt.black)
         x = (self.width() - self.pixmap.width()) // 2
         y = (self.height() - self.pixmap.height()) // 2
-        painter.drawPixmap(x, y, self.pixmap)
+        p.drawPixmap(x, y, self.pixmap)
 
 class EssayWindow(QWidget):
     def __init__(self):
@@ -2473,6 +2532,7 @@ class EssayWindow(QWidget):
         back_button_size = 100
         self.back_button = QPushButton("", self)
         back_pixmap = QPixmap(back_button_path)
+
         if back_pixmap.isNull():
             print(f"Error: Failed to load image at {back_button_path}")
         else:
@@ -2611,13 +2671,13 @@ class IsianWindow(QWidget):
         self.corbel_label = QLabel("""1. Gambar di samping berbentuk …
                                    
                                    
-
         
         2. Bus sekolah berbentuk...
         
         3. Gambar di samping berbentuk...
                                    
         4. Buah melon berbentuk...
+                                   
                                                 
                                    
         5. Gambar di samping berbentuk\n""", self)
@@ -2625,7 +2685,7 @@ class IsianWindow(QWidget):
         self.corbel_label.setStyleSheet("color: #333F50; background: transparent;")
         self.corbel_label.setAlignment(Qt.AlignCenter)
         self.corbel_label.setFixedWidth(600)
-        self.corbel_label.move(632, 200)  # Centered vertically
+        self.corbel_label.move(632, 250)  # Centered vertically
 
         # 3 Images arranged vertically
         image_paths = [
