@@ -104,7 +104,7 @@ class MaterialWindow(QWidget):
         self.ball_label.setFont(QFont("Cooper Black", 20))
         self.ball_label.setStyleSheet("color: #333F50; background: transparent;")
         self.ball_label.move(buttonXOffset + 20, -20)  # Start off-screen top
-        self.ball_label.setFixedWidth(150)  # Ensure label stays with button
+        self.ball_label.setFixedWidth(150)  # Ensure label stays with button x
 
         # Block Button
         self.button2 = QPushButton("", self)
